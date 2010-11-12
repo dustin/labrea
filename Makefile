@@ -11,24 +11,24 @@ LUACFLAGS=-fPIC
 CXXFLAGS=-fPIC -Wall -g -I$(LUA)/src
 
 default:
-	make `uname -s`
+	$(MAKE) `uname -s`
 
 labrea.so: lua labrea.o scripting.o
 	$(CXX) $(LDFLAGS) -o labrea.so labrea.o scripting.o $(LUA)/src/*.o
 
 lua:
-	cd $(LUA)/src && make MORECFLAGS="$(LUACFLAGS)" $(LUATARGET)
+	cd $(LUA)/src && $(MAKE) MORECFLAGS="$(LUACFLAGS)" $(LUATARGET)
 	rm $(LUA)/src/lua.o $(LUA)/src/luac.o
 
 clean:
 	rm -f labrea.so labrea.o scripting.o
-	cd $(LUA) && make clean
+	cd $(LUA) && $(MAKE) clean
 
 linux:
-	make LDFLAGS="$(LINUX_LDFLAGS)" labrea.so
+	$(MAKE) LDFLAGS="$(LINUX_LDFLAGS)" labrea.so
 
 mac:
-	make LDFLAGS="$(MAC_LDFLAGS)" labrea.so
+	$(MAKE) LDFLAGS="$(MAC_LDFLAGS)" labrea.so
 
 # Uname -> target mappings.
 Linux: linux
