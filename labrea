@@ -1,6 +1,9 @@
 #!/bin/sh
 
-labreaso=`dirname $0`/labrea.so
+owd=`pwd`
+cd `dirname $0`
+labreaso=`pwd -P`/labrea.so
+cd $owd
 
 case `uname -s` in
     Darwin)
