@@ -6,7 +6,7 @@ LDFLAGS=$(OSX_LDFLAGS)
 
 LUA=lua-5.1.4
 
-CFLAGS=-fpic -I$(LUA)/src
+CXXFLAGS=-fpic -Wall -g -I$(LUA)/src
 
 labrea.so: lua labrea.o
 	$(CXX) $(LDFLAGS) -o labrea.so labrea.o $(LUA)/src/*.o
