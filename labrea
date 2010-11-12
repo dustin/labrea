@@ -1,0 +1,35 @@
+#!/bin/sh
+
+labreaso=`dirname $0`/labrea.so
+
+case `uname -s` in
+    Darwin)
+        DYLD_FORCE_FLAT_NAMESPACE=YES
+        DYLD_INSERT_LIBRARIES=$labreaso
+        export DYLD_FORCE_FLAT_NAMESPACE
+        export DYLD_INSERT_LIBRARIES
+        ;;
+    *)
+        echo "Sorry, `uname -s` is not supported."
+esac
+
+LABREA_SCRIPT=$1
+shift
+
+if [ ! -f "$LABREA_SCRIPT" ]
+then
+    echo "Can't find labrea script."
+    exit 1
+fi
+
+case $LABREA_SCRIPT in
+    *.lua)
+        ;;
+    *)
+        echo "'$LABREA_SCRIPT' doesn't look like a lua script."
+        exit 1
+esac
+
+export LABREA_SCRIPT
+
+exec "$@"
