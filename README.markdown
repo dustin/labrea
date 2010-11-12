@@ -1,10 +1,10 @@
-* Slow Down!
+# Slow Down!
 
 La Brea allows you to slow down parts of an application
 programatically.  It's great for simulating a slow network, disk, or
 other types of things within a process.
 
-** Usage
+## Usage
 
 First, write a script to slow stuff down.  For example, if you'd like
 to slow random seeks down, you can create a script that looks like the
