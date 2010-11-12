@@ -1,6 +1,8 @@
 #include <iostream>
 #include <queue>
 
+#include <unistd.h>
+
 #include <assert.h>
 
 #include "labrea.h"
@@ -18,7 +20,7 @@ static bool initialized(false);
 
 static int do_usleep(lua_State *ls) {
     int howlong = lua_tointeger(ls, -1);
-    std::cerr << "Script asked us to sleep for " << howlong << std::endl;
+    usleep(howlong);
     return 0;
 }
 
