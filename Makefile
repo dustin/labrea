@@ -1,24 +1,35 @@
 LINUX_LDFLAGS=-shared -Wl,-soname,labrea.so -ldl
-OSX_LDFLAGS=-MD -MP -Wl,-undefined -Wl,dynamic_lookup -dynamiclib
+MAC_LDFLAGS=-MD -MP -Wl,-undefined -Wl,dynamic_lookup -dynamiclib
 
-# LDFLAGS=$(OSX_LDFLAGS)
-LDFLAGS=$(LINUX_LDFLAGS)
-
-.PHONY: lua
+PLATS=linux mac
+.PHONY: lua $(PLATS)
 
 LUA=lua-5.1.4
+LUATARGET=posix
+LUACFLAGS=-fPIC
 
 CXXFLAGS=-fPIC -Wall -g -I$(LUA)/src
+
+default:
+	@echo "Please pick a platform [e.g. make mac]:"
+	@echo "   $(PLATS)"
 
 labrea.so: lua labrea.o scripting.o
 	$(CXX) $(LDFLAGS) -o labrea.so labrea.o scripting.o $(LUA)/src/*.o
 
 lua:
-	cd $(LUA) && make MYCFLAGS=-fPIC posix
+	cd $(LUA)/src && make MORECFLAGS="$(LUACFLAGS)" $(LUATARGET)
 	rm $(LUA)/src/lua.o $(LUA)/src/luac.o
 
+linux:
+	make LDFLAGS="$(LINUX_LDFLAGS)" labrea.so
+
+mac:
+	make LDFLAGS="$(MAC_LDFLAGS)" labrea.so
+
 clean:
-	rm labrea.so labrea.o
+	rm -f labrea.so labrea.o scripting.o
+	cd $(LUA) && make clean
 
 labrea.o: labrea.cc labrea.h locks.hh scripting.hh
 scripting.o: scripting.cc labrea.h locks.hh scripting.hh
