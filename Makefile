@@ -8,8 +8,8 @@ LUA=lua-5.1.4
 
 CXXFLAGS=-fpic -Wall -g -I$(LUA)/src
 
-labrea.so: lua labrea.o
-	$(CXX) $(LDFLAGS) -o labrea.so labrea.o $(LUA)/src/*.o
+labrea.so: lua labrea.o scripting.o
+	$(CXX) $(LDFLAGS) -o labrea.so labrea.o scripting.o $(LUA)/src/*.o
 
 lua:
 	cd $(LUA) && make posix
@@ -19,3 +19,5 @@ clean:
 	rm labrea.so labrea.o
 
 labrea.o: labrea.cc labrea.h
+scripting.o: scripting.cc labrea.h
+

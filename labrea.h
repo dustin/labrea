@@ -1,3 +1,6 @@
+#ifndef LABREA_H
+#define LABREA_H 1
+
 #include <dlfcn.h>
 #include <stdexcept>
 
@@ -116,3 +119,5 @@ private:
     pthread_mutex_t *mutex;
     bool locked;
 };
+
+#endif /* LABREA_H */
