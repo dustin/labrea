@@ -35,8 +35,7 @@ Rv wf1(const char *name, Arg1 a1) {
         assert(f);
     }
     handle_call(name);
-    Rv rv = f(a1);
-    return rv;
+    return f(a1);
 }
 
 template <typename Rv, typename Arg1, typename Arg2>
@@ -47,8 +46,7 @@ Rv wf2(const char *name, Arg1 a1, Arg2 a2) {
         assert(f);
     }
     handle_call(name);
-    Rv rv = f(a1, a2);
-    return rv;
+    return f(a1, a2);
 }
 
 template <typename Rv, typename Arg1, typename Arg2, typename Arg3>
@@ -59,8 +57,7 @@ Rv wf3(const char *name, Arg1 a1, Arg2 a2, Arg3 a3) {
         assert(f);
     }
     handle_call(name);
-    Rv rv = f(a1, a2, a3);
-    return rv;
+    return f(a1, a2, a3);
 }
 
 template <typename Rv, typename Arg1, typename Arg2, typename Arg3, typename Arg4>
@@ -71,8 +68,7 @@ Rv wf4(const char *name, Arg1 a1, Arg2 a2, Arg3 a3, Arg4 a4) {
         assert(f);
     }
     handle_call(name);
-    Rv rv = f(a1, a2, a3, a4);
-    return rv;
+    return f(a1, a2, a3, a4);
 }
 
 template <typename Rv, typename Arg1, typename Arg2, typename Arg3,
@@ -84,6 +80,5 @@ Rv wf5(const char *name, Arg1 a1, Arg2 a2, Arg3 a3, Arg4 a4, Arg5 a5) {
         assert(f);
     }
     handle_call(name);
-    Rv rv = f(a1, a2, a3, a4, a5);
-    return rv;
+    return f(a1, a2, a3, a4, a5);
 }
