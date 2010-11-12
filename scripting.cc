@@ -13,9 +13,9 @@ extern "C" {
 #include "lualib.h"
 }
 
-static pthread_mutex_t luamutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t luamutex = PTHREAD_MUTEX_INITIALIZER;
 static lua_State *luaStateProto(NULL);
-static std::queue<lua_State*> stateThreads;
+std::queue<lua_State*> stateThreads;
 static bool initialized(false);
 
 static int do_usleep(lua_State *ls) {
@@ -46,7 +46,7 @@ static void initLuaState() {
     initialized = true;
 }
 
-static lua_State* getLuaState() {
+lua_State* getLuaState() {
     LockHolder lh(&luamutex);
     initLuaState();
     if (stateThreads.empty()) {
@@ -57,19 +57,6 @@ static lua_State* getLuaState() {
     stateThreads.pop();
     return rv;
 }
-
-class LuaStateHolder {
-public:
-    LuaStateHolder(lua_State *ls) : state(ls) {
-        assert(state);
-    }
-    ~LuaStateHolder() {
-        LockHolder lh(&luamutex);
-        stateThreads.push(state);
-    }
-
-    lua_State *state;
-};
 
 void handle_call(const char *call) {
     char fname[32];
@@ -84,4 +71,38 @@ void handle_call(const char *call) {
                       << lua_tostring(lsh.state, -1) << std::endl;
         }
     }
+}
+
+void add_arg(lua_State *state, const int val) {
+    lua_pushinteger(state, val);
+}
+
+void add_arg(lua_State *state, const long val) {
+    // loss
+    lua_pushinteger(state, static_cast<int>(val));
+}
+
+void add_arg(lua_State *state, const long unsigned val) {
+    // loss
+    lua_pushinteger(state, static_cast<int>(val));
+}
+
+void add_arg(lua_State *state, const long long val) {
+    // loss
+    lua_pushinteger(state, static_cast<int>(val));
+}
+
+void add_arg(lua_State *state, const unsigned long long val) {
+    // loss
+    lua_pushinteger(state, static_cast<int>(val));
+}
+
+void add_arg(lua_State *state, const void* val) {
+    union {
+        const void* p;
+        int i;
+    } hack;
+    hack.p = val;
+    // loss
+    add_arg(state, hack.i);
 }

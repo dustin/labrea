@@ -18,6 +18,6 @@ lua:
 clean:
 	rm labrea.so labrea.o
 
-labrea.o: labrea.cc labrea.h
-scripting.o: scripting.cc labrea.h
+labrea.o: labrea.cc labrea.h locks.hh scripting.hh
+scripting.o: scripting.cc labrea.h locks.hh scripting.hh
 
