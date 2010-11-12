@@ -9,6 +9,10 @@ case `uname -s` in
         export DYLD_FORCE_FLAT_NAMESPACE
         export DYLD_INSERT_LIBRARIES
         ;;
+    Linux)
+        LD_PRELOAD=$labreaso
+        export LD_PRELOAD
+        ;;
     *)
         echo "Sorry, `uname -s` is not supported."
 esac
