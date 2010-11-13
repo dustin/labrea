@@ -38,7 +38,7 @@ Rv wf1(const char *name, Arg1 a1) {
         f = reinterpret_cast<typeof(f)>(dlsym(RTLD_NEXT, name));
         assert(f);
     }
-    handle_call<Arg1>(name, a1);
+    before_call<Arg1>(name, a1);
     return f(a1);
 }
 
@@ -49,7 +49,7 @@ Rv wf2(const char *name, Arg1 a1, Arg2 a2) {
         f = reinterpret_cast<typeof(f)>(dlsym(RTLD_NEXT, name));
         assert(f);
     }
-    handle_call<Arg1, Arg2>(name, a1, a2);
+    before_call<Arg1, Arg2>(name, a1, a2);
     return f(a1, a2);
 }
 
@@ -60,7 +60,7 @@ Rv wf3(const char *name, Arg1 a1, Arg2 a2, Arg3 a3) {
         f = reinterpret_cast<typeof(f)>(dlsym(RTLD_NEXT, name));
         assert(f);
     }
-    handle_call<Arg1, Arg2, Arg3>(name, a1, a2, a3);
+    before_call<Arg1, Arg2, Arg3>(name, a1, a2, a3);
     return f(a1, a2, a3);
 }
 
@@ -71,7 +71,7 @@ Rv wf4(const char *name, Arg1 a1, Arg2 a2, Arg3 a3, Arg4 a4) {
         f = reinterpret_cast<typeof(f)>(dlsym(RTLD_NEXT, name));
         assert(f);
     }
-    handle_call<Arg1, Arg2, Arg3, Arg4>(name, a1, a2, a3, a4);
+    before_call<Arg1, Arg2, Arg3, Arg4>(name, a1, a2, a3, a4);
     return f(a1, a2, a3, a4);
 }
 
@@ -83,7 +83,7 @@ Rv wf5(const char *name, Arg1 a1, Arg2 a2, Arg3 a3, Arg4 a4, Arg5 a5) {
         f = reinterpret_cast<typeof(f)>(dlsym(RTLD_NEXT, name));
         assert(f);
     }
-    handle_call<Arg1, Arg2, Arg3, Arg4, Arg5>(name, a1, a2, a3, a4, a5);
+    before_call<Arg1, Arg2, Arg3, Arg4, Arg5>(name, a1, a2, a3, a4, a5);
     return f(a1, a2, a3, a4, a5);
 }
 

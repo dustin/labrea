@@ -37,7 +37,7 @@ void add_arg(lua_State *state, const unsigned long long val);
 void add_arg(lua_State *state, const void* val);
 
 template <typename Arg1>
-void handle_call(const char *call, Arg1 a1) {
+void before_call(const char *call, Arg1 a1) {
     char fname[32];
     snprintf(fname, sizeof(fname)-1, "before_%s", call);
     LuaStateHolder lsh(getLuaState());
@@ -54,7 +54,7 @@ void handle_call(const char *call, Arg1 a1) {
 }
 
 template <typename Arg1, typename Arg2>
-void handle_call(const char *call, Arg1 a1, Arg2 a2) {
+void before_call(const char *call, Arg1 a1, Arg2 a2) {
     char fname[32];
     snprintf(fname, sizeof(fname)-1, "before_%s", call);
     LuaStateHolder lsh(getLuaState());
@@ -72,7 +72,7 @@ void handle_call(const char *call, Arg1 a1, Arg2 a2) {
 }
 
 template <typename Arg1, typename Arg2, typename Arg3>
-void handle_call(const char *call, Arg1 a1, Arg2 a2, Arg3 a3) {
+void before_call(const char *call, Arg1 a1, Arg2 a2, Arg3 a3) {
     char fname[32];
     snprintf(fname, sizeof(fname)-1, "before_%s", call);
     LuaStateHolder lsh(getLuaState());
@@ -91,7 +91,7 @@ void handle_call(const char *call, Arg1 a1, Arg2 a2, Arg3 a3) {
 }
 
 template <typename Arg1, typename Arg2, typename Arg3, typename Arg4>
-void handle_call(const char *call, Arg1 a1, Arg2 a2, Arg3 a3, Arg4 a4) {
+void before_call(const char *call, Arg1 a1, Arg2 a2, Arg3 a3, Arg4 a4) {
     char fname[32];
     snprintf(fname, sizeof(fname)-1, "before_%s", call);
     LuaStateHolder lsh(getLuaState());
@@ -111,7 +111,7 @@ void handle_call(const char *call, Arg1 a1, Arg2 a2, Arg3 a3, Arg4 a4) {
 }
 
 template <typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5>
-void handle_call(const char *call, Arg1 a1, Arg2 a2, Arg3 a3, Arg4 a4, Arg5 a5) {
+void before_call(const char *call, Arg1 a1, Arg2 a2, Arg3 a3, Arg4 a4, Arg5 a5) {
     char fname[32];
     snprintf(fname, sizeof(fname)-1, "before_%s", call);
     LuaStateHolder lsh(getLuaState());
