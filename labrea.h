@@ -39,7 +39,9 @@ Rv wf1(const char *name, Arg1 a1) {
         assert(f);
     }
     before_call<Arg1>(name, a1);
-    return f(a1);
+    Rv rv = f(a1);
+    after_call<Rv, Arg1>(name, rv, a1);
+    return rv;
 }
 
 template <typename Rv, typename Arg1, typename Arg2>
@@ -50,7 +52,9 @@ Rv wf2(const char *name, Arg1 a1, Arg2 a2) {
         assert(f);
     }
     before_call<Arg1, Arg2>(name, a1, a2);
-    return f(a1, a2);
+    Rv rv = f(a1, a2);
+    after_call<Rv, Arg1, Arg2>(name, rv, a1, a2);
+    return rv;
 }
 
 template <typename Rv, typename Arg1, typename Arg2, typename Arg3>
@@ -61,7 +65,9 @@ Rv wf3(const char *name, Arg1 a1, Arg2 a2, Arg3 a3) {
         assert(f);
     }
     before_call<Arg1, Arg2, Arg3>(name, a1, a2, a3);
-    return f(a1, a2, a3);
+    Rv rv = f(a1, a2, a3);
+    after_call<Rv, Arg1, Arg2, Arg3>(name, rv, a1, a2, a3);
+    return rv;
 }
 
 template <typename Rv, typename Arg1, typename Arg2, typename Arg3, typename Arg4>
@@ -72,7 +78,9 @@ Rv wf4(const char *name, Arg1 a1, Arg2 a2, Arg3 a3, Arg4 a4) {
         assert(f);
     }
     before_call<Arg1, Arg2, Arg3, Arg4>(name, a1, a2, a3, a4);
-    return f(a1, a2, a3, a4);
+    Rv rv = f(a1, a2, a3, a4);
+    after_call<Rv, Arg1, Arg2, Arg3, Arg4>(name, rv, a1, a2, a3, a4);
+    return rv;
 }
 
 template <typename Rv, typename Arg1, typename Arg2, typename Arg3,
@@ -84,7 +92,9 @@ Rv wf5(const char *name, Arg1 a1, Arg2 a2, Arg3 a3, Arg4 a4, Arg5 a5) {
         assert(f);
     }
     before_call<Arg1, Arg2, Arg3, Arg4, Arg5>(name, a1, a2, a3, a4, a5);
-    return f(a1, a2, a3, a4, a5);
+    Rv rv = f(a1, a2, a3, a4, a5);
+    after_call<Rv, Arg1, Arg2, Arg3, Arg4>(name, rv, a1, a2, a3, a4);
+    return rv;
 }
 
 #endif /* LABREA_H */

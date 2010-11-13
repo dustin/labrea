@@ -53,6 +53,24 @@ void before_call(const char *call, Arg1 a1) {
     }
 }
 
+template <typename Rv, typename Arg1>
+void after_call(const char *call, Rv rv, Arg1 a1) {
+    char fname[32];
+    snprintf(fname, sizeof(fname)-1, "after_%s", call);
+    LuaStateHolder lsh(getLuaState());
+    assert(lsh.state);
+    lua_settop(lsh.state, 0);
+    lua_getfield(lsh.state, LUA_GLOBALSINDEX, fname);
+    if (!lua_isnil(lsh.state, -1)) {
+        add_arg(lsh.state, rv);
+        add_arg(lsh.state, a1);
+        if (lua_pcall(lsh.state, 2, 0, 0)) {
+            std::cerr << "Error invoking " << fname << ": "
+                      << lua_tostring(lsh.state, -1) << std::endl;
+        }
+    }
+}
+
 template <typename Arg1, typename Arg2>
 void before_call(const char *call, Arg1 a1, Arg2 a2) {
     char fname[32];
@@ -65,6 +83,25 @@ void before_call(const char *call, Arg1 a1, Arg2 a2) {
         add_arg(lsh.state, a1);
         add_arg(lsh.state, a2);
         if (lua_pcall(lsh.state, 2, 0, 0)) {
+            std::cerr << "Error invoking " << fname << ": "
+                      << lua_tostring(lsh.state, -1) << std::endl;
+        }
+    }
+}
+
+template <typename Rv, typename Arg1, typename Arg2>
+void after_call(const char *call, Rv rv, Arg1 a1, Arg2 a2) {
+    char fname[32];
+    snprintf(fname, sizeof(fname)-1, "after_%s", call);
+    LuaStateHolder lsh(getLuaState());
+    assert(lsh.state);
+    lua_settop(lsh.state, 0);
+    lua_getfield(lsh.state, LUA_GLOBALSINDEX, fname);
+    if (!lua_isnil(lsh.state, -1)) {
+        add_arg(lsh.state, rv);
+        add_arg(lsh.state, a1);
+        add_arg(lsh.state, a2);
+        if (lua_pcall(lsh.state, 3, 0, 0)) {
             std::cerr << "Error invoking " << fname << ": "
                       << lua_tostring(lsh.state, -1) << std::endl;
         }
@@ -84,6 +121,26 @@ void before_call(const char *call, Arg1 a1, Arg2 a2, Arg3 a3) {
         add_arg(lsh.state, a2);
         add_arg(lsh.state, a3);
         if (lua_pcall(lsh.state, 3, 0, 0)) {
+            std::cerr << "Error invoking " << fname << ": "
+                      << lua_tostring(lsh.state, -1) << std::endl;
+        }
+    }
+}
+
+template <typename Rv, typename Arg1, typename Arg2, typename Arg3>
+void after_call(const char *call, Rv rv, Arg1 a1, Arg2 a2, Arg3 a3) {
+    char fname[32];
+    snprintf(fname, sizeof(fname)-1, "after_%s", call);
+    LuaStateHolder lsh(getLuaState());
+    assert(lsh.state);
+    lua_settop(lsh.state, 0);
+    lua_getfield(lsh.state, LUA_GLOBALSINDEX, fname);
+    if (!lua_isnil(lsh.state, -1)) {
+        add_arg(lsh.state, rv);
+        add_arg(lsh.state, a1);
+        add_arg(lsh.state, a2);
+        add_arg(lsh.state, a3);
+        if (lua_pcall(lsh.state, 4, 0, 0)) {
             std::cerr << "Error invoking " << fname << ": "
                       << lua_tostring(lsh.state, -1) << std::endl;
         }
@@ -110,6 +167,27 @@ void before_call(const char *call, Arg1 a1, Arg2 a2, Arg3 a3, Arg4 a4) {
     }
 }
 
+template <typename Rv, typename Arg1, typename Arg2, typename Arg3, typename Arg4>
+void after_call(const char *call, Rv rv, Arg1 a1, Arg2 a2, Arg3 a3, Arg4 a4) {
+    char fname[32];
+    snprintf(fname, sizeof(fname)-1, "after_%s", call);
+    LuaStateHolder lsh(getLuaState());
+    assert(lsh.state);
+    lua_settop(lsh.state, 0);
+    lua_getfield(lsh.state, LUA_GLOBALSINDEX, fname);
+    if (!lua_isnil(lsh.state, -1)) {
+        add_arg(lsh.state, rv);
+        add_arg(lsh.state, a1);
+        add_arg(lsh.state, a2);
+        add_arg(lsh.state, a3);
+        add_arg(lsh.state, a4);
+        if (lua_pcall(lsh.state, 5, 0, 0)) {
+            std::cerr << "Error invoking " << fname << ": "
+                      << lua_tostring(lsh.state, -1) << std::endl;
+        }
+    }
+}
+
 template <typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5>
 void before_call(const char *call, Arg1 a1, Arg2 a2, Arg3 a3, Arg4 a4, Arg5 a5) {
     char fname[32];
@@ -125,6 +203,30 @@ void before_call(const char *call, Arg1 a1, Arg2 a2, Arg3 a3, Arg4 a4, Arg5 a5) 
         add_arg(lsh.state, a4);
         add_arg(lsh.state, a5);
         if (lua_pcall(lsh.state, 5, 0, 0)) {
+            std::cerr << "Error invoking " << fname << ": "
+                      << lua_tostring(lsh.state, -1) << std::endl;
+        }
+    }
+}
+
+template <typename Rv, typename Arg1, typename Arg2, typename Arg3,
+          typename Arg4, typename Arg5>
+void after_call(const char *call, Rv rv, Arg1 a1, Arg2 a2, Arg3 a3,
+                Arg4 a4, Arg5 a5) {
+    char fname[32];
+    snprintf(fname, sizeof(fname)-1, "after_%s", call);
+    LuaStateHolder lsh(getLuaState());
+    assert(lsh.state);
+    lua_settop(lsh.state, 0);
+    lua_getfield(lsh.state, LUA_GLOBALSINDEX, fname);
+    if (!lua_isnil(lsh.state, -1)) {
+        add_arg(lsh.state, rv);
+        add_arg(lsh.state, a1);
+        add_arg(lsh.state, a2);
+        add_arg(lsh.state, a3);
+        add_arg(lsh.state, a4);
+        add_arg(lsh.state, a5);
+        if (lua_pcall(lsh.state, 6, 0, 0)) {
             std::cerr << "Error invoking " << fname << ": "
                       << lua_tostring(lsh.state, -1) << std::endl;
         }
