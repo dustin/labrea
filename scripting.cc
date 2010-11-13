@@ -58,21 +58,6 @@ lua_State* getLuaState() {
     return rv;
 }
 
-void handle_call(const char *call) {
-    char fname[32];
-    snprintf(fname, sizeof(fname)-1, "before_%s", call);
-    LuaStateHolder lsh(getLuaState());
-    assert(lsh.state);
-    lua_settop(lsh.state, 0);
-    lua_getfield(lsh.state, LUA_GLOBALSINDEX, fname);
-    if (!lua_isnil(lsh.state, -1)) {
-        if (lua_pcall(lsh.state, 0, 0, 0)) {
-            std::cerr << "Error invoking " << fname << ": "
-                      << lua_tostring(lsh.state, -1) << std::endl;
-        }
-    }
-}
-
 void add_arg(lua_State *state, const int val) {
     lua_pushinteger(state, val);
 }

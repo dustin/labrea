@@ -6,8 +6,6 @@
 
 #include "scripting.hh"
 
-void handle_call(const char *call);
-
 #define DEFINE1(rv, n, a1)                                              \
     extern "C" rv n(a1 arg1) {                                          \
         return wf1<rv, a1>(#n, arg1);                                   \
