@@ -50,7 +50,6 @@ lua_State* getLuaState() {
     LockHolder lh(&luamutex);
     initLuaState();
     if (stateThreads.empty()) {
-        std::cerr << "New lua thread." << std::endl;
         stateThreads.push(lua_newthread(luaStateProto));
     }
     lua_State *rv = stateThreads.front();
