@@ -62,29 +62,25 @@ void add_arg(lua_State *state, const int val) {
 }
 
 void add_arg(lua_State *state, const long val) {
-    // loss
-    lua_pushinteger(state, static_cast<int>(val));
+    lua_pushinteger(state, static_cast<int64_t>(val));
 }
 
 void add_arg(lua_State *state, const long unsigned val) {
-    // loss
-    lua_pushinteger(state, static_cast<int>(val));
+    lua_pushinteger(state, static_cast<uint64_t>(val));
 }
 
 void add_arg(lua_State *state, const long long val) {
-    // loss
-    lua_pushinteger(state, static_cast<int>(val));
+    lua_pushinteger(state, static_cast<int64_t>(val));
 }
 
 void add_arg(lua_State *state, const unsigned long long val) {
-    // loss
-    lua_pushinteger(state, static_cast<int>(val));
+    lua_pushinteger(state, static_cast<uint64_t>(val));
 }
 
 void add_arg(lua_State *state, const void* val) {
     union {
         const void* p;
-        int i;
+        ptrdiff_t i;
     } hack;
     hack.p = val;
     // loss
