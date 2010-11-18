@@ -17,7 +17,7 @@ labrea.so: lua labrea.o scripting.o
 	$(CXX) $(LDFLAGS) -o labrea.so labrea.o scripting.o $(LUA)/src/*.o
 
 lua:
-	cd $(LUA)/src && $(MAKE) MORECFLAGS="$(LUACFLAGS)" $(LUATARGET)
+	cd $(LUA)/src && $(MAKE) CC="$(CXX)" MORECFLAGS="$(LUACFLAGS)" $(LUATARGET)
 	rm $(LUA)/src/lua.o $(LUA)/src/luac.o
 
 clean:
