@@ -11,6 +11,8 @@ extern "C" {
 
 #include "locks.hh"
 
+namespace labrea {
+
 extern pthread_mutex_t luamutex;
 extern std::queue<lua_State*> stateThreads;
 
@@ -231,6 +233,8 @@ void after_call(const char *call, Rv rv, Arg1 a1, Arg2 a2, Arg3 a3,
                       << lua_tostring(lsh.state, -1) << std::endl;
         }
     }
+}
+
 }
 
 #endif /* SCRIPTING_HH */

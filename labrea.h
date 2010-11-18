@@ -8,28 +8,30 @@
 
 #define DEFINE1(rv, n, a1)                                              \
     extern "C" rv n(a1 arg1) {                                          \
-        return wf1<rv, a1>(#n, arg1);                                   \
+        return labrea::wf1<rv, a1>(#n, arg1);                           \
     }
 
 #define DEFINE2(rv, n, a1, a2)                                          \
     extern "C" rv n(a1 arg1, a2 arg2) {                                 \
-        return wf2<rv, a1, a2>(#n, arg1, arg2);                         \
+        return labrea::wf2<rv, a1, a2>(#n, arg1, arg2);                 \
     }
 
 #define DEFINE3(rv, n, a1, a2, a3)                                      \
     extern "C" rv n(a1 arg1, a2 arg2, a3 arg3) {                        \
-        return wf3<rv, a1, a2, a3>(#n, arg1, arg2, arg3);               \
+        return labrea::wf3<rv, a1, a2, a3>(#n, arg1, arg2, arg3);       \
     }
 
 #define DEFINE4(rv, n, a1, a2, a3, a4)                                  \
     extern "C" rv n(a1 arg1, a2 arg2, a3 arg3, a4 arg4) {               \
-        return wf4<rv, a1, a2, a3, a4>(#n, arg1, arg2, arg3, arg4);     \
+        return labrea::wf4<rv, a1, a2, a3, a4>(#n, arg1, arg2, arg3, arg4); \
     }
 
 #define DEFINE5(rv, n, a1, a2, a3, a4, a5)                              \
     extern "C" rv n(a1 arg1, a2 arg2, a3 arg3, a4 arg4, a5 arg5) {      \
-        return wf5<rv, a1, a2, a3, a4, a5>(#n, arg1, arg2, arg3, arg4, arg5); \
+        return labrea::wf5<rv, a1, a2, a3, a4, a5>(#n, arg1, arg2, arg3, arg4, arg5); \
     }
+
+namespace labrea {
 
 template <typename Rv, typename Arg1>
 Rv wf1(const char *name, Arg1 a1) {
@@ -95,6 +97,8 @@ Rv wf5(const char *name, Arg1 a1, Arg2 a2, Arg3 a3, Arg4 a4, Arg5 a5) {
     Rv rv = f(a1, a2, a3, a4, a5);
     after_call<Rv, Arg1, Arg2, Arg3, Arg4>(name, rv, a1, a2, a3, a4);
     return rv;
+}
+
 }
 
 #endif /* LABREA_H */

@@ -3,6 +3,8 @@
 
 #include <pthread.h>
 
+namespace labrea {
+
 class LockHolder {
 public:
     LockHolder(pthread_mutex_t *m) : mutex(m), locked(false) {
@@ -35,5 +37,7 @@ private:
     pthread_mutex_t *mutex;
     bool locked;
 };
+
+}
 
 #endif /* LOCKS_HH */

@@ -13,6 +13,8 @@ extern "C" {
 #include "lualib.h"
 }
 
+namespace labrea {
+
 pthread_mutex_t luamutex = PTHREAD_MUTEX_INITIALIZER;
 static lua_State *luaStateProto(NULL);
 std::queue<lua_State*> stateThreads;
@@ -85,4 +87,6 @@ void add_arg(lua_State *state, const void* val) {
     hack.p = val;
     // loss
     add_arg(state, hack.i);
+}
+
 }
