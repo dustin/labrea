@@ -1,4 +1,5 @@
 #include <iostream>
+#include <ios>
 #include <queue>
 
 #include <unistd.h>
@@ -26,6 +27,31 @@ static int do_usleep(lua_State *ls) {
     return 0;
 }
 
+static void* pointer_cast(lua_Integer n) {
+    union {
+        lua_Integer n;
+        void* p;
+    } hack;
+    hack.n = n;
+    return hack.p;
+}
+
+static int do_invoke(lua_State *ls) {
+    int n_args = lua_gettop(ls) - 1; // function is an argument.
+    assert(n_args == 3); // only supported value currently.
+    const char *name = lua_tostring(ls, 1);
+    int (*f)(int, void*, int) = reinterpret_cast<typeof(f)>(dlsym(RTLD_NEXT, name));
+
+    int a1 = lua_tointeger(ls, 2);
+    void *a2 = pointer_cast(lua_tointeger(ls, 3));
+    int a3 = lua_tointeger(ls, 4);
+    lua_settop(ls, 0);
+    int rv = f(a1, a2, a3);
+    lua_settop(ls, 0);
+    lua_pushinteger(ls, rv);
+    return 1;
+}
+
 // Invoked with lock.
 static void initLuaState() {
     if (initialized) {
@@ -34,6 +60,7 @@ static void initLuaState() {
     luaStateProto = luaL_newstate();
     luaL_openlibs(luaStateProto);
     lua_register (luaStateProto, "usleep", do_usleep);
+    lua_register (luaStateProto, "invoke", do_invoke);
     const char *path = getenv("LABREA_SCRIPT");
     if (path == NULL) {
         std::cerr << "No LABREA_SCRIPT set, taking it from stdin." << std::endl;
@@ -82,11 +109,10 @@ void add_arg(lua_State *state, const unsigned long long val) {
 void add_arg(lua_State *state, const void* val) {
     union {
         const void* p;
-        ptrdiff_t i;
+        uint64_t i;
     } hack;
     hack.p = val;
-    // loss
-    add_arg(state, hack.i);
+    lua_pushinteger(state, hack.i);
 }
 
 }

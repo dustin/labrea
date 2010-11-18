@@ -29,6 +29,16 @@ public:
     lua_State *state;
 };
 
+template <typename Rv, typename Arg1, typename Arg2, typename Arg3>
+void* func_cast(Rv (*f)(Arg1 a1, Arg2 a2, Arg3 a3)) {
+    union {
+        typeof(f) thefunc;
+        void *p;
+    } hack;
+    hack.thefunc = f;
+    return hack.p;
+}
+
 void add_arg(lua_State *state, const int val);
 void add_arg(lua_State *state, const long val);
 void add_arg(lua_State *state, const long unsigned val);
@@ -144,6 +154,33 @@ void after_call(const char *call, Rv rv, Arg1 a1, Arg2 a2, Arg3 a3) {
             std::cerr << "Error invoking " << fname << ": "
                       << lua_tostring(lsh.state, -1) << std::endl;
         }
+    }
+}
+
+template <typename Rv, typename Arg1, typename Arg2, typename Arg3>
+bool around_call(const char *call, Arg1 a1, Arg2 a2, Arg3 a3, Rv &out) {
+
+    char fname[32];
+    snprintf(fname, sizeof(fname)-1, "around_%s", call);
+    LuaStateHolder lsh(getLuaState());
+    assert(lsh.state);
+    lua_settop(lsh.state, 0);
+    lua_getfield(lsh.state, LUA_GLOBALSINDEX, fname);
+    if (!lua_isnil(lsh.state, -1)) {
+        lua_pushstring(lsh.state, call);
+        add_arg(lsh.state, a1);
+        add_arg(lsh.state, a2);
+        add_arg(lsh.state, a3);
+        if (lua_pcall(lsh.state, 4, 1, 0)) {
+            std::cerr << "Error invoking " << fname << ": "
+                      << lua_tostring(lsh.state, -1) << std::endl;
+        }
+        assert(lua_gettop(lsh.state) > 0);
+        assert(lua_isnumber(lsh.state, 1));
+        out = lua_tonumber(lsh.state, 1);
+        return true;
+    } else {
+        return false;
     }
 }
 
