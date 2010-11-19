@@ -24,6 +24,7 @@ static class LabreaInit {
 public:
     LabreaInit() {
         for (size_t n = 0; functions[n].name; ++n) {
+            functions[n].pos = static_cast<int>(n);
             functions[n].orig = dlsym(RTLD_NEXT, functions[n].name);
             assert(functions[n].orig);
         }
