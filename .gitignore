@@ -3,6 +3,8 @@
 *.so
 *~
 /gen_invoker.cc
+/gen_scripting.hh
+/gen_wrapperfuns.hh
 /lua-5.1.4/src/liblua.a
 /lua-5.1.4/src/lua
 /lua-5.1.4/src/luac

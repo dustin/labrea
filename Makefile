@@ -40,7 +40,11 @@ gen_invoker.cc: mkgeninvoker.py
 gen_scripting.hh: mkcallfuns.py
 	./mkcallfuns.py
 
+gen_wrapperfuns.hh: mkwrapfuns.py
+	./mkwrapfuns.py
+
 scripting.hh: locks.hh gen_scripting.hh labreatypes.h script_state.hh
+labrea.h: gen_wrapperfuns.hh labreatypes.h
 
 gen_invoker.o: gen_invoker.cc gen_invoker.hh labrea.h scripting.hh labreatypes.h
 labrea.o: labrea.cc labrea.h locks.hh scripting.hh labreatypes.h \
