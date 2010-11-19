@@ -3,6 +3,7 @@
 
 #include <unistd.h>
 #include <pthread.h>
+#include <errno.h>
 
 #include <assert.h>
 
@@ -46,6 +47,11 @@ static int do_invoke(lua_State *ls) {
     return 1;
 }
 
+static int set_errno(lua_State *ls) {
+    errno = lua_tointeger(ls, -1);
+    return 0;
+}
+
 static bool hasFunction(lua_State *state, const char *fname) {
     lua_settop(state, 0);
     lua_getfield(state, LUA_GLOBALSINDEX, fname);
@@ -74,6 +80,7 @@ void initScriptingState() {
     luaL_openlibs(luaStateProto);
     lua_register (luaStateProto, "usleep", do_usleep);
     lua_register (luaStateProto, "invoke", do_invoke);
+    lua_register (luaStateProto, "set_errno", set_errno);
     const char *path = getenv("LABREA_SCRIPT");
     if (path == NULL) {
         std::cerr << "No LABREA_SCRIPT set, taking it from stdin." << std::endl;
