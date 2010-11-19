@@ -8,6 +8,7 @@
 #include "lualib.h"
 
 #include "locks.hh"
+#include "labreatypes.h"
 
 namespace labrea {
 

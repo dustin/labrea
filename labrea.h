@@ -4,26 +4,14 @@
 #include <dlfcn.h>
 #include <stdexcept>
 
+#include "labreatypes.h"
 #include "scripting.hh"
-
-#define MAX_ARGS 16
 
 #define START_DEFS struct labrea::ftype labrea::functions[] = {
 
 #define END_DEFS {0, NULL, NULL, 0, {0}, false, false, false}};
 
-
 namespace labrea {
-struct ftype {
-    int          pos;
-    const char  *name;
-    void        *orig;
-    size_t       num_args;
-    size_t       arg_widths[MAX_ARGS];
-    bool         has_before;
-    bool         has_around;
-    bool         has_after;
-};
 
 extern ftype functions[];
 

@@ -34,6 +34,6 @@ mac:
 Linux: linux
 Darwin: mac
 
-labrea.o: labrea.cc labrea.h locks.hh scripting.hh
-scripting.o: scripting.cc labrea.h locks.hh scripting.hh
-
+labrea.o: labrea.cc labrea.h locks.hh scripting.hh labreatypes.h \
+          calls.defs definecalls.h buildfunctions.h
+scripting.o: scripting.cc labrea.h locks.hh scripting.hh labreatypes.h
