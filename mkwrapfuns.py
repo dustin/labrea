@@ -63,7 +63,8 @@ struct ftype *findFunc(const char *name);
         gen(out, i)
 
     out.write("""}
-#endif /* GEN_WRAPPERFUNS_HH */""")
+#endif /* GEN_WRAPPERFUNS_HH */
+""")
 
     out.close()
     os.rename('gen_wrapperfuns.hh.tmp', 'gen_wrapperfuns.hh')
