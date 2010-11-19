@@ -13,8 +13,8 @@ CXXFLAGS=-fPIC -Wall -g -I$(LUA)/src
 default:
 	$(MAKE) `uname -s`
 
-labrea.so: lua labrea.o scripting.o
-	$(CXX) $(LDFLAGS) -o labrea.so labrea.o scripting.o $(LUA)/src/*.o
+labrea.so: lua labrea.o scripting.o gen_invoker.o
+	$(CXX) $(LDFLAGS) -o labrea.so labrea.o scripting.o gen_invoker.o $(LUA)/src/*.o
 
 lua:
 	cd $(LUA)/src && $(MAKE) CC="$(CXX)" MORECFLAGS="$(LUACFLAGS)" $(LUATARGET)
@@ -34,6 +34,11 @@ mac:
 Linux: linux
 Darwin: mac
 
+gen_invoker.hh gen_invoker.cc: mkgeninvoker.py
+	./mkgeninvoker.py
+
+gen_invoker.o: gen_invoker.cc gen_invoker.hh labrea.h scripting.hh labreatypes.h
 labrea.o: labrea.cc labrea.h locks.hh scripting.hh labreatypes.h \
-          calls.defs definecalls.h buildfunctions.h
-scripting.o: scripting.cc labrea.h locks.hh scripting.hh labreatypes.h
+          calls.defs definecalls.h buildfunctions.h gen_invoker.hh
+scripting.o: scripting.cc labrea.h locks.hh scripting.hh labreatypes.h \
+             gen_invoker.hh

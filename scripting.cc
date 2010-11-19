@@ -7,6 +7,7 @@
 #include <assert.h>
 
 #include "labrea.h"
+#include "gen_invoker.hh"
 
 extern "C" {
 #include "lua.h"
@@ -26,28 +27,37 @@ static int do_usleep(lua_State *ls) {
     return 0;
 }
 
-static void* pointer_cast(lua_Integer n) {
-    union {
-        lua_Integer n;
-        void* p;
-    } hack;
-    hack.n = n;
-    return hack.p;
-}
-
 static int do_invoke(lua_State *ls) {
     int n_args = lua_gettop(ls) - 1; // function is an argument.
-    assert(n_args == 3); // only supported value currently.
     int offset = lua_tointeger(ls, 1);
     struct ftype fun = functions[offset];
     assert(fun.pos == offset);
-    int (*f)(int, void*, int) = reinterpret_cast<typeof(f)>(fun.orig);
 
-    int a1 = lua_tointeger(ls, 2);
-    void *a2 = pointer_cast(lua_tointeger(ls, 3));
-    int a3 = lua_tointeger(ls, 4);
-    lua_settop(ls, 0);
-    int rv = f(a1, a2, a3);
+    // Capture the arguments.
+    union farg args[MAX_ARGS];
+    for (int i = 0; i < n_args; ++i) {
+        args[i].i64 = lua_tointeger(ls, i + 2); // 2 == starting point of args
+    }
+
+    lua_Integer rv;
+    switch (fun.num_args) {
+    case 1:
+        rv = abstractInvoke(&fun, args[0]);
+        break;
+    case 2:
+        rv = abstractInvoke(&fun, args[0], args[1]);
+        break;
+    case 3:
+        rv = abstractInvoke(&fun, args[0], args[1], args[2]);
+        break;
+    case 4:
+        rv = abstractInvoke(&fun, args[0], args[1], args[2], args[3]);
+        break;
+    case 5:
+        rv = abstractInvoke(&fun, args[0], args[1], args[2], args[3], args[5]);
+        break;
+    }
+
     lua_settop(ls, 0);
     lua_pushinteger(ls, rv);
     return 1;

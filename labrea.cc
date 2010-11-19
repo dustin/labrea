@@ -20,11 +20,22 @@ END_DEFS
 
 namespace labrea {
 
+static int computeOffset(struct ftype *fun) {
+    assert(fun);
+    int offset(0);
+    for (size_t b = 0; b < fun->num_args; ++b) {
+        offset = (offset << 1) | (fun->arg_widths[b] == 4 ? 0 : 1);
+    }
+    offset = (offset << 1) | (fun->rv_size == 4 ? 0 : 1);
+    return offset;
+}
+
 static class LabreaInit {
 public:
     LabreaInit() {
         for (size_t n = 0; functions[n].name; ++n) {
             functions[n].pos = static_cast<int>(n);
+            functions[n].offset = computeOffset(&functions[n]);
             functions[n].orig = dlsym(RTLD_NEXT, functions[n].name);
             assert(functions[n].orig);
         }
