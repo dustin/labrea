@@ -1,8 +1,8 @@
 #include <iostream>
 #include <ios>
-#include <queue>
 
 #include <unistd.h>
+#include <pthread.h>
 
 #include <assert.h>
 
@@ -18,8 +18,8 @@ extern "C" {
 namespace labrea {
 
 pthread_mutex_t luamutex = PTHREAD_MUTEX_INITIALIZER;
+static pthread_key_t lua_thread_key;
 static lua_State *luaStateProto(NULL);
-std::queue<lua_State*> stateThreads;
 
 static int do_usleep(lua_State *ls) {
     int howlong = lua_tointeger(ls, -1);
@@ -47,6 +47,11 @@ static int do_invoke(lua_State *ls) {
 }
 
 void initScriptingState() {
+    if (pthread_key_create(&lua_thread_key, NULL) != 0) {
+        perror("pthread_key_create");
+        abort();
+    }
+
     luaStateProto = luaL_newstate();
     luaL_openlibs(luaStateProto);
     lua_register (luaStateProto, "usleep", do_usleep);
@@ -65,12 +70,14 @@ void initScriptingState() {
 }
 
 lua_State* getLuaState() {
-    LockHolder lh(&luamutex);
-    if (stateThreads.empty()) {
-        stateThreads.push(lua_newthread(luaStateProto));
+    lua_State *rv = reinterpret_cast<lua_State*>(pthread_getspecific(lua_thread_key));
+    if (rv == NULL) {
+        rv = lua_newthread(luaStateProto);
+        if (pthread_setspecific(lua_thread_key, rv) != 0) {
+            perror("pthread_setspecific");
+            abort();
+        }
     }
-    lua_State *rv = stateThreads.front();
-    stateThreads.pop();
     return rv;
 }
 

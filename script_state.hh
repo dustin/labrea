@@ -7,8 +7,6 @@
 
 namespace labrea {
 
-extern std::queue<lua_State*> stateThreads;
-
 extern pthread_mutex_t luamutex;
 lua_State* getLuaState();
 
@@ -18,8 +16,6 @@ public:
         assert(state);
     }
     ~LuaStateHolder() {
-        LockHolder lh(&luamutex);
-        stateThreads.push(state);
     }
 
     lua_State *state;
