@@ -2,8 +2,7 @@
 *.o
 *.so
 *~
+/gen_invoker.cc
 /lua-5.1.4/src/liblua.a
 /lua-5.1.4/src/lua
 /lua-5.1.4/src/luac
-/gen_invoker.cc
-/gen_invoker.hh

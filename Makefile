@@ -34,7 +34,7 @@ mac:
 Linux: linux
 Darwin: mac
 
-gen_invoker.hh gen_invoker.cc: mkgeninvoker.py
+gen_invoker.cc: mkgeninvoker.py
 	./mkgeninvoker.py
 
 gen_invoker.o: gen_invoker.cc gen_invoker.hh labrea.h scripting.hh labreatypes.h

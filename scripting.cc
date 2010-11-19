@@ -39,24 +39,7 @@ static int do_invoke(lua_State *ls) {
         args[i].i64 = lua_tointeger(ls, i + 2); // 2 == starting point of args
     }
 
-    lua_Integer rv;
-    switch (fun.num_args) {
-    case 1:
-        rv = abstractInvoke(&fun, args[0]);
-        break;
-    case 2:
-        rv = abstractInvoke(&fun, args[0], args[1]);
-        break;
-    case 3:
-        rv = abstractInvoke(&fun, args[0], args[1], args[2]);
-        break;
-    case 4:
-        rv = abstractInvoke(&fun, args[0], args[1], args[2], args[3]);
-        break;
-    case 5:
-        rv = abstractInvoke(&fun, args[0], args[1], args[2], args[3], args[5]);
-        break;
-    }
+    lua_Integer rv = abstractInvoke(&fun, args);
 
     lua_settop(ls, 0);
     lua_pushinteger(ls, rv);

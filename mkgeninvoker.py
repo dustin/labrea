@@ -54,7 +54,7 @@ namespace labrea {
     for i in range(1, MAXARGS+1):
         fargs = ', '.join('union farg a%d' % x for x in range(i))
         callargs = ', '.join('a%d' % x for x in range(i))
-        out.write("lua_Integer abstractInvoke(struct ftype *fun, %s) {\n" % fargs)
+        out.write("static lua_Integer abstractInvoke(struct ftype *fun, %s) {\n" % fargs)
         out.write("    assert(fun->num_args == %d);\n" % i)
         allfuns = dict((encode(4, seq), seq) for seq in set(itertools.permutations("48" * i, i)))
         allfuns.update(dict((encode(8, seq), seq) for seq in set(itertools.permutations("48" * i, i))))
@@ -70,23 +70,21 @@ namespace labrea {
         out.write("    return allfuns[fun->offset](fun->orig, %s);\n" % (callargs))
         out.write("}\n\n")
 
-    out.write("}")
+    out.write("lua_Integer abstractInvoke(struct ftype *fun, union farg *args) {\n")
+    out.write("    lua_Integer rv;\n")
+    out.write("    switch (fun->num_args) {");
+    for i in range(1, MAXARGS+1):
+        out.write("    case %d:\n" % i)
+        fa = ', '.join('args[%d]' % x for x in range(i))
+        out.write("        rv = abstractInvoke(fun, %s);\n" % fa)
+        out.write("        break;\n")
+
+    out.write("    }\n")
+    out.write("    return rv;\n")
+    out.write("}\n")
+
+    out.write("}\n")
+
 
     out.close()
     os.rename('gen_invoker.cc.tmp', 'gen_invoker.cc')
-
-    out = file('gen_invoker.hh.tmp', 'w')
-    out.write("""
-#include "labreatypes.h"
-
-namespace labrea {
-""")
-    for i in range(1, MAXARGS+1):
-        fargs = ', '.join('union farg a%d' % x for x in range(i))
-        callargs = ', '.join('a%d' % x for x in range(i))
-        out.write("lua_Integer abstractInvoke(struct ftype *fun, %s);\n" % fargs)
-
-    out.write("\n}\n")
-
-    out.close()
-    os.rename('gen_invoker.hh.tmp', 'gen_invoker.hh')
