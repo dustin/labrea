@@ -19,7 +19,6 @@ namespace labrea {
 pthread_mutex_t luamutex = PTHREAD_MUTEX_INITIALIZER;
 static lua_State *luaStateProto(NULL);
 std::queue<lua_State*> stateThreads;
-static bool initialized(false);
 
 static int do_usleep(lua_State *ls) {
     int howlong = lua_tointeger(ls, -1);
@@ -53,31 +52,29 @@ static int do_invoke(lua_State *ls) {
 }
 
 // Invoked with lock.
-static void initLuaState() {
-    if (initialized) {
-        return;
+static class LuaStateInitializer {
+public:
+    LuaStateInitializer() {
+        luaStateProto = luaL_newstate();
+        luaL_openlibs(luaStateProto);
+        lua_register (luaStateProto, "usleep", do_usleep);
+        lua_register (luaStateProto, "invoke", do_invoke);
+        const char *path = getenv("LABREA_SCRIPT");
+        if (path == NULL) {
+            std::cerr << "No LABREA_SCRIPT set, taking it from stdin." << std::endl;
+        }
+        int status = luaL_dofile(luaStateProto, path);
+        if (status) {
+            std::cerr << "Error processing labrea script from "
+                      << (path == NULL ? "stdin" : path)
+                      << ": " << lua_tostring(luaStateProto, -1) << std::endl;
+            exit(1);
+        }
     }
-    luaStateProto = luaL_newstate();
-    luaL_openlibs(luaStateProto);
-    lua_register (luaStateProto, "usleep", do_usleep);
-    lua_register (luaStateProto, "invoke", do_invoke);
-    const char *path = getenv("LABREA_SCRIPT");
-    if (path == NULL) {
-        std::cerr << "No LABREA_SCRIPT set, taking it from stdin." << std::endl;
-    }
-    int status = luaL_dofile(luaStateProto, path);
-    if (status) {
-        std::cerr << "Error processing labrea script from "
-                  << (path == NULL ? "stdin" : path)
-                  << ": " << lua_tostring(luaStateProto, -1) << std::endl;
-        exit(1);
-    }
-    initialized = true;
-}
+} initializer;
 
 lua_State* getLuaState() {
     LockHolder lh(&luamutex);
-    initLuaState();
     if (stateThreads.empty()) {
         stateThreads.push(lua_newthread(luaStateProto));
     }
