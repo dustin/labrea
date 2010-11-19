@@ -46,7 +46,7 @@ void around_call(struct ftype *f, %(callsig)s, Rv &out) {
                       << lua_tostring(lsh.state, -1) << std::endl;
         }
     assert(lua_gettop(lsh.state) > 0);
-    assert(lua_isinteger(lsh.state, 1));
+    assert(lua_isnumber(lsh.state, 1));
     out = lua_tointeger(lsh.state, 1);
 }
 """ % (arity + 1))
