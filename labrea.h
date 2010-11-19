@@ -6,70 +6,112 @@
 
 #include "scripting.hh"
 
-#define DEFINE1(rv, n, a1)                                              \
-    extern "C" rv n(a1 arg1) {                                          \
-        return labrea::wf1<rv, a1>(#n, arg1);                           \
-    }
+#define MAX_ARGS 16
 
-#define DEFINE2(rv, n, a1, a2)                                          \
-    extern "C" rv n(a1 arg1, a2 arg2) {                                 \
-        return labrea::wf2<rv, a1, a2>(#n, arg1, arg2);                 \
-    }
+#define START_DEFS struct labrea::ftype labrea::functions[] = {
 
-#define DEFINE3(rv, n, a1, a2, a3)                                      \
-    extern "C" rv n(a1 arg1, a2 arg2, a3 arg3) {                        \
-        return labrea::wf3<rv, a1, a2, a3>(#n, arg1, arg2, arg3);       \
-    }
+#define END_DEFS {NULL, NULL, 0, {0}, false, false, false}};
 
-#define DEFINE4(rv, n, a1, a2, a3, a4)                                  \
-    extern "C" rv n(a1 arg1, a2 arg2, a3 arg3, a4 arg4) {               \
-        return labrea::wf4<rv, a1, a2, a3, a4>(#n, arg1, arg2, arg3, arg4); \
-    }
-
-#define DEFINE5(rv, n, a1, a2, a3, a4, a5)                              \
-    extern "C" rv n(a1 arg1, a2 arg2, a3 arg3, a4 arg4, a5 arg5) {      \
-        return labrea::wf5<rv, a1, a2, a3, a4, a5>(#n, arg1, arg2, arg3, arg4, arg5); \
-    }
 
 namespace labrea {
+struct ftype {
+    const char  *name;
+    void        *orig;
+    size_t       num_args;
+    size_t       arg_widths[MAX_ARGS];
+    bool         has_before;
+    bool         has_around;
+    bool         has_after;
+};
+
+extern ftype functions[];
+
+void initFunctions();
+
+struct ftype *findFunc(const char *name);
+
+template <typename Rv, typename Arg1>
+Rv invoke(struct ftype *ft, Arg1 a1) {
+    assert(ft);
+    assert(ft->orig);
+    assert(ft->num_args == 1);
+    Rv (*x)(Arg1 a1) = reinterpret_cast<Rv (*)(Arg1)>(ft->orig);
+    return x(a1);
+}
+
+template <typename Rv, typename Arg1, typename Arg2>
+Rv invoke(struct ftype *ft, Arg1 a1, Arg2 a2) {
+    assert(ft);
+    assert(ft->orig);
+    assert(ft->num_args == 2);
+    Rv (*x)(Arg1 a1, Arg2 a2) = reinterpret_cast<Rv (*)(Arg1, Arg2)>(ft->orig);
+    return x(a1, a2);
+}
+
+template <typename Rv, typename Arg1, typename Arg2, typename Arg3>
+Rv invoke(struct ftype *ft, Arg1 a1, Arg2 a2, Arg3 a3) {
+    assert(ft);
+    assert(ft->orig);
+    assert(ft->num_args == 3);
+    Rv (*x)(Arg1 a1, Arg2 a2, Arg3 a3) = reinterpret_cast<Rv (*)(Arg1, Arg2, Arg3)>(ft->orig);
+    return x(a1, a2, a3);
+}
+
+template <typename Rv, typename Arg1, typename Arg2, typename Arg3, typename Arg4>
+Rv invoke(struct ftype *ft, Arg1 a1, Arg2 a2, Arg3 a3, Arg4 a4) {
+    assert(ft);
+    assert(ft->orig);
+    assert(ft->num_args == 4);
+    Rv (*x)(Arg1 a1, Arg2 a2, Arg3 a3, Arg4 a4) = reinterpret_cast<Rv (*)(Arg1, Arg2, Arg3, Arg4)>(ft->orig);
+    return x(a1, a2, a3, a4);
+}
+
+template <typename Rv, typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5>
+Rv invoke(struct ftype *ft, Arg1 a1, Arg2 a2, Arg3 a3, Arg4 a4, Arg5 a5) {
+    assert(ft);
+    assert(ft->orig);
+    assert(ft->num_args == 5);
+    Rv (*x)(Arg1 a1, Arg2 a2, Arg3 a3, Arg4 a4, Arg5 a5) = reinterpret_cast<Rv (*)(Arg1, Arg2, Arg3, Arg4, Arg5)>(ft->orig);
+    return x(a1, a2, a3, a4, a5);
+}
 
 template <typename Rv, typename Arg1>
 Rv wf1(const char *name, Arg1 a1) {
-    static Rv (*f)(Arg1);
-    if (f == NULL) {
-        f = reinterpret_cast<typeof(f)>(dlsym(RTLD_NEXT, name));
-        assert(f);
+    static struct ftype *func;
+    if (func == NULL) {
+        initFunctions();
+        func = findFunc(name);
     }
     before_call<Arg1>(name, a1);
-    Rv rv = f(a1);
+    Rv rv = invoke<Rv, Arg1>(func, a1);
     after_call<Rv, Arg1>(name, rv, a1);
     return rv;
 }
 
 template <typename Rv, typename Arg1, typename Arg2>
 Rv wf2(const char *name, Arg1 a1, Arg2 a2) {
-    static Rv (*f)(Arg1, Arg2);
-    if (f == NULL) {
-        f = reinterpret_cast<typeof(f)>(dlsym(RTLD_NEXT, name));
-        assert(f);
+    static struct ftype *func;
+    if (func == NULL) {
+        initFunctions();
+        func = findFunc(name);
     }
     before_call<Arg1, Arg2>(name, a1, a2);
-    Rv rv = f(a1, a2);
+    Rv rv = invoke<Rv, Arg1, Arg2>(func, a1, a2);
     after_call<Rv, Arg1, Arg2>(name, rv, a1, a2);
     return rv;
 }
 
 template <typename Rv, typename Arg1, typename Arg2, typename Arg3>
 Rv wf3(const char *name, Arg1 a1, Arg2 a2, Arg3 a3) {
-    static Rv (*f)(Arg1, Arg2, Arg3);
-    if (f == NULL) {
-        f = reinterpret_cast<typeof(f)>(dlsym(RTLD_NEXT, name));
-        assert(f);
+    static struct ftype *func;
+    if (func == NULL) {
+        initFunctions();
+        func = findFunc(name);
     }
     before_call<Arg1, Arg2, Arg3>(name, a1, a2, a3);
     Rv rv;
     if (!around_call(name, a1, a2, a3, rv)) {
-        rv = f(a1, a2, a3);
+        rv = invoke<Rv, Arg1, Arg2, Arg3>(func, a1, a2, a3);
     }
     after_call<Rv, Arg1, Arg2, Arg3>(name, rv, a1, a2, a3);
     return rv;
@@ -77,13 +119,13 @@ Rv wf3(const char *name, Arg1 a1, Arg2 a2, Arg3 a3) {
 
 template <typename Rv, typename Arg1, typename Arg2, typename Arg3, typename Arg4>
 Rv wf4(const char *name, Arg1 a1, Arg2 a2, Arg3 a3, Arg4 a4) {
-    static Rv (*f)(Arg1, Arg2, Arg3, Arg4);
-    if (f == NULL) {
-        f = reinterpret_cast<typeof(f)>(dlsym(RTLD_NEXT, name));
-        assert(f);
+    static struct ftype *func;
+    if (func == NULL) {
+        initFunctions();
+        func = findFunc(name);
     }
     before_call<Arg1, Arg2, Arg3, Arg4>(name, a1, a2, a3, a4);
-    Rv rv = f(a1, a2, a3, a4);
+    Rv rv = invoke<Rv, Arg1, Arg2, Arg3, Arg4>(func, a1, a2, a3, a4);
     after_call<Rv, Arg1, Arg2, Arg3, Arg4>(name, rv, a1, a2, a3, a4);
     return rv;
 }
@@ -91,13 +133,13 @@ Rv wf4(const char *name, Arg1 a1, Arg2 a2, Arg3 a3, Arg4 a4) {
 template <typename Rv, typename Arg1, typename Arg2, typename Arg3,
               typename Arg4, typename Arg5>
 Rv wf5(const char *name, Arg1 a1, Arg2 a2, Arg3 a3, Arg4 a4, Arg5 a5) {
-    static Rv (*f)(Arg1, Arg2, Arg3, Arg4, Arg5);
-    if (f == NULL) {
-        f = reinterpret_cast<typeof(f)>(dlsym(RTLD_NEXT, name));
-        assert(f);
+    static struct ftype *func;
+    if (func == NULL) {
+        initFunctions();
+        func = findFunc(name);
     }
     before_call<Arg1, Arg2, Arg3, Arg4, Arg5>(name, a1, a2, a3, a4, a5);
-    Rv rv = f(a1, a2, a3, a4, a5);
+    Rv rv = invoke<Rv, Arg1, Arg2, Arg3, Arg4, Arg5>(func, a1, a2, a3, a4, a5);
     after_call<Rv, Arg1, Arg2, Arg3, Arg4>(name, rv, a1, a2, a3, a4);
     return rv;
 }

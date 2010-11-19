@@ -12,17 +12,40 @@
 
 #include "labrea.h"
 
-DEFINE1(int, close, int)
+pthread_once_t finit_once = PTHREAD_ONCE_INIT;
 
-DEFINE3(ssize_t, read, int, void*, size_t)
-DEFINE3(ssize_t, write, int, const void*, size_t)
-DEFINE3(off_t, lseek, int, off_t, int)
+START_DEFS
+#include "definecalls.h"
+END_DEFS
 
-DEFINE4(ssize_t, recv, int, void*, size_t, int)
-DEFINE3(ssize_t, recvmsg, int, struct msghdr *, int)
-DEFINE4(ssize_t, send, int, const void*, size_t, int)
-DEFINE3(ssize_t, sendmsg, int, const struct msghdr *, int)
+#include "buildfunctions.h"
 
-DEFINE5(int, select, int, fd_set*, fd_set*, fd_set*, struct timeval*)
+namespace labrea {
+static void doInit() {
+    for (size_t n = 0; functions[n].name; ++n) {
+        functions[n].orig = dlsym(RTLD_NEXT, functions[n].name);
+        assert(functions[n].orig);
+    }
+}
 
-DEFINE3(int, accept, int, struct sockaddr *, socklen_t *)
+struct ftype *findFunc(const char *name) {
+    struct ftype *rv(NULL);
+    for (size_t i = 0; rv == NULL && functions[i].name; ++i) {
+        if (strcmp(functions[i].name, name) == 0) {
+            rv = &functions[i];
+        }
+    }
+    if (rv == NULL) {
+        std::cerr << "Failed to find " << name << std::endl;
+        abort();
+    }
+    return rv;
+}
+
+void initFunctions() {
+    if (pthread_once(&finit_once, labrea::doInit) != 0) {
+        perror("pthread_once");
+        abort();
+    }
+}
+}
