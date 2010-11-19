@@ -46,27 +46,23 @@ static int do_invoke(lua_State *ls) {
     return 1;
 }
 
-// Invoked with lock.
-static class LuaStateInitializer {
-public:
-    LuaStateInitializer() {
-        luaStateProto = luaL_newstate();
-        luaL_openlibs(luaStateProto);
-        lua_register (luaStateProto, "usleep", do_usleep);
-        lua_register (luaStateProto, "invoke", do_invoke);
-        const char *path = getenv("LABREA_SCRIPT");
-        if (path == NULL) {
-            std::cerr << "No LABREA_SCRIPT set, taking it from stdin." << std::endl;
-        }
-        int status = luaL_dofile(luaStateProto, path);
-        if (status) {
-            std::cerr << "Error processing labrea script from "
-                      << (path == NULL ? "stdin" : path)
-                      << ": " << lua_tostring(luaStateProto, -1) << std::endl;
-            exit(1);
-        }
+void initScriptingState() {
+    luaStateProto = luaL_newstate();
+    luaL_openlibs(luaStateProto);
+    lua_register (luaStateProto, "usleep", do_usleep);
+    lua_register (luaStateProto, "invoke", do_invoke);
+    const char *path = getenv("LABREA_SCRIPT");
+    if (path == NULL) {
+        std::cerr << "No LABREA_SCRIPT set, taking it from stdin." << std::endl;
     }
-} initializer;
+    int status = luaL_dofile(luaStateProto, path);
+    if (status) {
+        std::cerr << "Error processing labrea script from "
+                  << (path == NULL ? "stdin" : path)
+                  << ": " << lua_tostring(luaStateProto, -1) << std::endl;
+        exit(1);
+    }
+}
 
 lua_State* getLuaState() {
     LockHolder lh(&luamutex);

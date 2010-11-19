@@ -14,6 +14,8 @@
 
 namespace labrea {
 
+void initScriptingState();
+
 template <typename Rv, typename Arg1, typename Arg2, typename Arg3>
 void* func_cast(Rv (*f)(Arg1 a1, Arg2 a2, Arg3 a3)) {
     union {

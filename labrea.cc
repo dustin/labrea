@@ -39,6 +39,8 @@ public:
             functions[n].orig = dlsym(RTLD_NEXT, functions[n].name);
             assert(functions[n].orig);
         }
+
+        initScriptingState();
     }
 } initializer;
 
