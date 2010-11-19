@@ -1,4 +1,4 @@
-LINUX_LDFLAGS=-shared -Wl,-soname,labrea.so -ldl
+LINUX_LDFLAGS=-shared -Wl,-soname,labrea.so -ldl -lpthread
 MAC_LDFLAGS=-MD -MP -Wl,-undefined -Wl,dynamic_lookup -dynamiclib
 
 PLATS=linux mac
