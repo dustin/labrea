@@ -94,7 +94,7 @@ Rv wf3(const char *name, Arg1 a1, Arg2 a2, Arg3 a3) {
     }
     before_call<Arg1, Arg2, Arg3>(name, a1, a2, a3);
     Rv rv;
-    if (!around_call(name, a1, a2, a3, rv)) {
+    if (!around_call(func, a1, a2, a3, rv)) {
         rv = invoke<Rv, Arg1, Arg2, Arg3>(func, a1, a2, a3);
     }
     after_call<Rv, Arg1, Arg2, Arg3>(name, rv, a1, a2, a3);

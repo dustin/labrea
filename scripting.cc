@@ -38,8 +38,10 @@ static void* pointer_cast(lua_Integer n) {
 static int do_invoke(lua_State *ls) {
     int n_args = lua_gettop(ls) - 1; // function is an argument.
     assert(n_args == 3); // only supported value currently.
-    const char *name = lua_tostring(ls, 1);
-    int (*f)(int, void*, int) = reinterpret_cast<typeof(f)>(dlsym(RTLD_NEXT, name));
+    int offset = lua_tointeger(ls, 1);
+    struct ftype fun = functions[offset];
+    assert(fun.pos == offset);
+    int (*f)(int, void*, int) = reinterpret_cast<typeof(f)>(fun.orig);
 
     int a1 = lua_tointeger(ls, 2);
     void *a2 = pointer_cast(lua_tointeger(ls, 3));

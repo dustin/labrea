@@ -159,16 +159,16 @@ void after_call(const char *call, Rv rv, Arg1 a1, Arg2 a2, Arg3 a3) {
 }
 
 template <typename Rv, typename Arg1, typename Arg2, typename Arg3>
-bool around_call(const char *call, Arg1 a1, Arg2 a2, Arg3 a3, Rv &out) {
+bool around_call(struct ftype *f, Arg1 a1, Arg2 a2, Arg3 a3, Rv &out) {
 
     char fname[32];
-    snprintf(fname, sizeof(fname)-1, "around_%s", call);
+    snprintf(fname, sizeof(fname)-1, "around_%s", f->name);
     LuaStateHolder lsh(getLuaState());
     assert(lsh.state);
     lua_settop(lsh.state, 0);
     lua_getfield(lsh.state, LUA_GLOBALSINDEX, fname);
     if (!lua_isnil(lsh.state, -1)) {
-        lua_pushstring(lsh.state, call);
+        add_arg(lsh.state, f->pos);
         add_arg(lsh.state, a1);
         add_arg(lsh.state, a2);
         add_arg(lsh.state, a3);
