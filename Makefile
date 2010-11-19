@@ -21,7 +21,8 @@ lua:
 	rm $(LUA)/src/lua.o $(LUA)/src/luac.o
 
 clean:
-	rm -f labrea.so labrea.o scripting.o
+	rm -f labrea.so labrea.o scripting.o gen_invoker.cc gen_invoker.o \
+          gen_scripting.hh gen_wrapperfuns.hh
 	cd $(LUA) && $(MAKE) clean
 
 linux:
