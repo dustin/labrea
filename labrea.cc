@@ -12,8 +12,6 @@
 
 #include "labrea.h"
 
-pthread_once_t finit_once = PTHREAD_ONCE_INIT;
-
 START_DEFS
 #include "definecalls.h"
 END_DEFS
@@ -21,12 +19,16 @@ END_DEFS
 #include "buildfunctions.h"
 
 namespace labrea {
-static void doInit() {
-    for (size_t n = 0; functions[n].name; ++n) {
-        functions[n].orig = dlsym(RTLD_NEXT, functions[n].name);
-        assert(functions[n].orig);
+
+static class LabreaInit {
+public:
+    LabreaInit() {
+        for (size_t n = 0; functions[n].name; ++n) {
+            functions[n].orig = dlsym(RTLD_NEXT, functions[n].name);
+            assert(functions[n].orig);
+        }
     }
-}
+} initializer;
 
 struct ftype *findFunc(const char *name) {
     struct ftype *rv(NULL);
@@ -42,10 +44,4 @@ struct ftype *findFunc(const char *name) {
     return rv;
 }
 
-void initFunctions() {
-    if (pthread_once(&finit_once, labrea::doInit) != 0) {
-        perror("pthread_once");
-        abort();
-    }
-}
 }
