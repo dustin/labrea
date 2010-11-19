@@ -24,14 +24,20 @@ Rv wrapper(const char *name, %(callsig)s) {
     if (func == NULL) {
         func = findFunc(name);
     }
-    before_call<%(types)s>(name, %(args)s);
+    if (func->has_before) {
+        before_call<%(types)s>(name, %(args)s);
+    }
 
     Rv rv;
-    if (!around_call(func, %(args)s, rv)) {
+    if (func->has_around) {
+        around_call(func, %(args)s, rv);
+    } else {
         rv = invoke<Rv, %(types)s>(func, %(args)s);
     }
 
-    after_call<Rv, %(types)s>(name, rv, %(args)s);
+    if (func->has_after) {
+        after_call<Rv, %(types)s>(name, rv, %(args)s);
+    }
     return rv;
 }
 

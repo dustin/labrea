@@ -30,29 +30,24 @@ void before_call(const char *call, %(callsig)s) {
 
     out.write("""
 template <typename Rv, %(typenames)s>
-bool around_call(struct ftype *f, %(callsig)s, Rv &out) {
+void around_call(struct ftype *f, %(callsig)s, Rv &out) {
     char fname[32];
     snprintf(fname, sizeof(fname)-1, "around_%%s", f->name);
     LuaStateHolder lsh(getLuaState());
     assert(lsh.state);
     lua_settop(lsh.state, 0);
     lua_getfield(lsh.state, LUA_GLOBALSINDEX, fname);
-    if (!lua_isnil(lsh.state, -1)) {
-        add_arg(lsh.state, f->pos);
+    add_arg(lsh.state, f->pos);
 """ % {'typenames': typenames, 'callsig': callsig})
     for i in range(arity):
-        out.write("        add_arg(lsh.state, a%d);\n" % (i+1))
-    out.write("""        if (lua_pcall(lsh.state, %d, 1, 0)) {
+        out.write("    add_arg(lsh.state, a%d);\n" % (i+1))
+    out.write("""    if (lua_pcall(lsh.state, %d, 1, 0)) {
             std::cerr << "Error invoking " << fname << ": "
                       << lua_tostring(lsh.state, -1) << std::endl;
         }
-        assert(lua_gettop(lsh.state) > 0);
-        assert(lua_isnumber(lsh.state, 1));
-        out = lua_tonumber(lsh.state, 1);
-        return true;
-    } else {
-        return false;
-    }
+    assert(lua_gettop(lsh.state) > 0);
+    assert(lua_isnumber(lsh.state, 1));
+    out = lua_tonumber(lsh.state, 1);
 }
 """ % (arity + 1))
 
