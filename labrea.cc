@@ -20,12 +20,16 @@ END_DEFS
 
 namespace labrea {
 
+#define acceptable_arg_size(x) ( (x == 4) || (x == 8) )
+
 static int computeOffset(struct ftype *fun) {
     assert(fun);
     int offset(0);
     for (size_t b = 0; b < fun->num_args; ++b) {
+        assert(acceptable_arg_size(fun->arg_widths[b]));
         offset = (offset << 1) | (fun->arg_widths[b] == 4 ? 0 : 1);
     }
+    assert(acceptable_arg_size(fun->rv_size));
     offset = (offset << 1) | (fun->rv_size == 4 ? 0 : 1);
     return offset;
 }
