@@ -1,8 +1,11 @@
-# Slow Down!
+# OPP Scripting
 
-La Brea allows you to slow down parts of an application
-programatically.  It's great for simulating a slow network, disk, or
-other types of things within a process.
+La Brea allows you to inject scripts into an existing application
+without recompiling.
+
+Initially, this was built to slow down specific parts of an
+application programatically.  It's great for simulating a slow
+network, disk, or other types of things within a process.
 
 ## Implemented Injection Points
 
@@ -44,7 +47,7 @@ following:
         if size > 64 then
             size = 64
         end
-        return invoke(f, d, buf, size)
+        return labrea.invoke(f, d, buf, size)
     end
 
 Alternatively, you can just cause an error as shown in the
@@ -60,7 +63,7 @@ following:
        if math.random(1, 100) == 13 then
           io.write(string.format("Slowing down a seek on fd=%d to %d (%d)\n",
                                  fd, offset, whence))
-          usleep(1000000)
+          labrea.usleep(1000000)
        end
     end
 
