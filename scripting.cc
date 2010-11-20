@@ -99,6 +99,7 @@ void initScriptingState() {
 lua_State* getLuaState() {
     lua_State *rv = reinterpret_cast<lua_State*>(pthread_getspecific(lua_thread_key));
     if (rv == NULL) {
+        LockHolder lh(&luamutex);
         rv = lua_newthread(luaStateProto);
         if (pthread_setspecific(lua_thread_key, rv) != 0) {
             perror("pthread_setspecific");
