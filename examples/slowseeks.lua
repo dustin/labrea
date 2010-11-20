@@ -2,6 +2,6 @@
 
 function before_lseek(...)
    if math.random(1, 100) <= 3 then
-      usleep(10000)
+      labrea.usleep(10000)
    end
 end
