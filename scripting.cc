@@ -83,13 +83,24 @@ static int do_reinit(lua_State *s) {
     return 0;
 }
 
+static void *l_alloc(void *ud, void *ptr, size_t osize, size_t nsize) {
+    (void)ud; (void)osize;
+
+    if (nsize == 0) {
+        labreafree(ptr);
+        return NULL;
+    } else {
+        return labrearealloc(ptr, nsize);
+    }
+}
+
 void initScriptingState() {
     if (pthread_key_create(&lua_thread_key, NULL) != 0) {
         perror("pthread_key_create");
         abort();
     }
 
-    luaStateProto = luaL_newstate();
+    luaStateProto = lua_newstate(l_alloc, NULL);
     luaL_openlibs(luaStateProto);
 
     lua_newtable(luaStateProto);

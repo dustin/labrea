@@ -20,6 +20,9 @@ END_DEFS
 
 namespace labrea {
 
+void (*labreafree)(void*);
+void* (*labrearealloc)(void*, size_t);
+
 #define acceptable_arg_size(x) ( (x == 4) || (x == 8) )
 
 static int computeOffset(struct ftype *fun) {
@@ -37,6 +40,11 @@ static int computeOffset(struct ftype *fun) {
 static class LabreaInit {
 public:
     LabreaInit() {
+        labreafree = reinterpret_cast<typeof(labreafree)>(dlsym(RTLD_NEXT, "free"));
+        labrearealloc = reinterpret_cast<typeof(labrearealloc)>(dlsym(RTLD_NEXT, "realloc"));
+        assert(labreafree);
+        assert(labrearealloc);
+
         for (size_t n = 0; functions[n].name; ++n) {
             functions[n].pos = static_cast<int>(n);
             functions[n].offset = computeOffset(&functions[n]);

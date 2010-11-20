@@ -13,6 +13,9 @@
 
 namespace labrea {
 
+extern void (*labreafree)(void*);
+extern void* (*labrearealloc)(void*, size_t);
+
 extern ftype functions[];
 
 }
