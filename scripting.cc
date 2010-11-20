@@ -19,6 +19,8 @@ extern "C" {
 namespace labrea {
 
 pthread_mutex_t luamutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_key_t invocation_state_key;
+
 static pthread_key_t lua_thread_key;
 static lua_State *luaStateProto(NULL);
 
@@ -96,6 +98,11 @@ static void *l_alloc(void *ud, void *ptr, size_t osize, size_t nsize) {
 
 void initScriptingState() {
     if (pthread_key_create(&lua_thread_key, NULL) != 0) {
+        perror("pthread_key_create");
+        abort();
+    }
+
+    if (pthread_key_create(&invocation_state_key, labreafree) != 0) {
         perror("pthread_key_create");
         abort();
     }

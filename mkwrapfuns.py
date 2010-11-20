@@ -24,6 +24,12 @@ Rv wrapper(const char *name, %(callsig)s) {
     if (func == NULL) {
         func = findFunc(name);
     }
+
+    LuaInvocation li;
+    if (!li.ready) {
+        return invoke<Rv, %(types)s>(func, %(args)s);
+    }
+
     if (func->has_before) {
         before_call<%(types)s>(name, %(args)s);
     }
