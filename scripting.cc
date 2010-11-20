@@ -77,6 +77,12 @@ static void regFunc(const char *name, lua_CFunction f) {
     lua_setfield(luaStateProto, -2, name);
 }
 
+static int do_reinit(lua_State *s) {
+    LockHolder lh(&luamutex);
+    initFunctions(luaStateProto);
+    return 0;
+}
+
 void initScriptingState() {
     if (pthread_key_create(&lua_thread_key, NULL) != 0) {
         perror("pthread_key_create");
@@ -92,6 +98,7 @@ void initScriptingState() {
     regFunc("usleep", do_usleep);
     regFunc("invoke", do_invoke);
     regFunc("set_errno", set_errno);
+    regFunc("reinit", do_reinit);
     const char *path = getenv("LABREA_SCRIPT");
     if (path == NULL) {
         std::cerr << "No LABREA_SCRIPT set, taking it from stdin." << std::endl;
