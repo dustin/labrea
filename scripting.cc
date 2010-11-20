@@ -72,18 +72,19 @@ static void initFunctions(lua_State *state) {
     }
 }
 
-static void regFunc(const char *name, lua_CFunction f) {
-    lua_settop(luaStateProto, 0);
-    lua_getglobal(luaStateProto, "labrea");
-    lua_pushcfunction(luaStateProto, f);
-    lua_setfield(luaStateProto, -2, name);
-}
-
 static int do_reinit(lua_State *s) {
     LockHolder lh(&luamutex);
     initFunctions(luaStateProto);
     return 0;
 }
+
+static const luaL_Reg labrea_funcs[] = {
+    {"usleep", do_usleep},
+    {"invoke", do_invoke},
+    {"set_errno", set_errno},
+    {"reinit", do_reinit},
+    {NULL, NULL}
+};
 
 static void *l_alloc(void *ud, void *ptr, size_t osize, size_t nsize) {
     (void)ud; (void)osize;
@@ -110,13 +111,8 @@ void initScriptingState() {
     luaStateProto = lua_newstate(l_alloc, NULL);
     luaL_openlibs(luaStateProto);
 
-    lua_newtable(luaStateProto);
-    lua_setglobal(luaStateProto, "labrea");
+    luaL_register(luaStateProto, "labrea", labrea_funcs);
 
-    regFunc("usleep", do_usleep);
-    regFunc("invoke", do_invoke);
-    regFunc("set_errno", set_errno);
-    regFunc("reinit", do_reinit);
     const char *path = getenv("LABREA_SCRIPT");
     if (path == NULL) {
         std::cerr << "No LABREA_SCRIPT set, taking it from stdin." << std::endl;
