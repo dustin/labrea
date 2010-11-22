@@ -1,3 +1,4 @@
+DEFINE3(int, open, const char *, int, int)
 DEFINE1(int, close, int)
 
 DEFINE3(ssize_t, read, int, void*, size_t)
