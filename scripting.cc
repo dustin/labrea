@@ -85,11 +85,11 @@ static int do_reinit(lua_State *s) {
 }
 
 static const luaL_Reg labrea_funcs[] = {
-    {"usleep", do_usleep},
     {"invoke", do_invoke},
-    {"set_errno", set_errno},
     {"reinit", do_reinit},
+    {"set_errno", set_errno},
     {"tostring", cstring_tolstring},
+    {"usleep", do_usleep},
     {NULL, NULL}
 };
 
