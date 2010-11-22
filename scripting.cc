@@ -24,6 +24,12 @@ pthread_key_t invocation_state_key;
 static pthread_key_t lua_thread_key;
 static lua_State *luaStateProto(NULL);
 
+static int cstring_tolstring(lua_State *ls) {
+    char *addr = reinterpret_cast<char *>(lua_tointeger(ls, -1));
+    lua_pushstring(ls, addr);
+    return 1;
+}
+
 static int do_usleep(lua_State *ls) {
     int howlong = lua_tointeger(ls, -1);
     usleep(howlong);
@@ -83,6 +89,7 @@ static const luaL_Reg labrea_funcs[] = {
     {"invoke", do_invoke},
     {"set_errno", set_errno},
     {"reinit", do_reinit},
+    {"tostring", cstring_tolstring},
     {NULL, NULL}
 };
 
