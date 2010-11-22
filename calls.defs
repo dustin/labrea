@@ -1,4 +1,9 @@
 DEFINE3(int, open, const char *, int, int)
+DEFINE2(FILE*, fopen, const char *, const char *)
+DEFINE4(size_t, fwrite, const void *, size_t, size_t, FILE*)
+DEFINE4(size_t, fread, void *, size_t, size_t, FILE*)
+DEFINE1(long, ftell, FILE*)
+DEFINE1(off_t, ftello, FILE*)
 DEFINE1(int, close, int)
 
 DEFINE3(ssize_t, read, int, void*, size_t)
