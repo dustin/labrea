@@ -39,8 +39,6 @@ public:
         ready = *pos == false;
         if (ready) {
             *pos = true;
-        } else {
-            std::cerr << "Trying to reenter." << std::endl;
         }
     }
 
