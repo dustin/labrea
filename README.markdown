@@ -1,6 +1,6 @@
 # OPP Scripting
 
-[[wiki/hackitecture.png|float|align=right]]
+![Hackitecture](labrea/wiki/hackitecture.png "This is how it works")
 
 La Brea allows you to inject scripts into an existing application
 without recompiling.
