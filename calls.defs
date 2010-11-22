@@ -12,4 +12,6 @@ DEFINE3(ssize_t, sendmsg, int, const struct msghdr *, int)
 
 DEFINE5(int, select, int, fd_set*, fd_set*, fd_set*, struct timeval*)
 
+DEFINE3(int, bind, int, const struct sockaddr *, socklen_t)
+DEFINE2(int, listen, int, int)
 DEFINE3(int, accept, int, struct sockaddr *, socklen_t *)

@@ -89,6 +89,7 @@ if __name__ == '__main__':
 namespace labrea {
 
 void add_arg(lua_State *state, const int val);
+void add_arg(lua_State *state, const unsigned int val);
 void add_arg(lua_State *state, const long val);
 void add_arg(lua_State *state, const long unsigned val);
 void add_arg(lua_State *state, const long long val);

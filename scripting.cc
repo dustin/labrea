@@ -148,6 +148,10 @@ lua_State* getLuaState() {
     return rv;
 }
 
+void add_arg(lua_State *state, const unsigned int val) {
+    lua_pushinteger(state, val);
+}
+
 void add_arg(lua_State *state, const int val) {
     lua_pushinteger(state, val);
 }
