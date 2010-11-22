@@ -30,6 +30,12 @@ static int cstring_tolstring(lua_State *ls) {
     return 1;
 }
 
+static int do_fileno(lua_State *ls) {
+    FILE *f = reinterpret_cast<FILE *>(lua_tointeger(ls, -1));
+    lua_pushinteger(ls, fileno(f));
+    return 1;
+}
+
 static int do_usleep(lua_State *ls) {
     int howlong = lua_tointeger(ls, -1);
     usleep(howlong);
@@ -85,6 +91,7 @@ static int do_reinit(lua_State *s) {
 }
 
 static const luaL_Reg labrea_funcs[] = {
+    {"fileno", do_fileno},
     {"invoke", do_invoke},
     {"reinit", do_reinit},
     {"set_errno", set_errno},
