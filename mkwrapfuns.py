@@ -12,9 +12,10 @@ def gen(out, arity):
     out.write("""template <typename Rv, %(typenames)s>
 Rv invoke(struct ftype *ft, %(callsig)s) {
     assert(ft);
-    assert(ft->orig);
     assert(ft->num_args == %(arity)d);
-    Rv (*x)(%(callsig)s) = reinterpret_cast<Rv (*)(%(callsig)s)>(ft->orig);
+    void *forig = ft->orig ? ft->orig : dlsym(RTLD_NEXT, ft->name);
+    assert(forig);
+    Rv (*x)(%(callsig)s) = reinterpret_cast<Rv (*)(%(callsig)s)>(forig);
     return x(%(args)s);
 }
 
