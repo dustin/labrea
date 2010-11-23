@@ -1,6 +1,8 @@
 #ifndef LOCKS_HH
 #define LOCKS_HH 1
 
+#include <cstring>
+
 #include <pthread.h>
 
 namespace labrea {

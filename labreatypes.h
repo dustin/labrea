@@ -1,6 +1,8 @@
 #ifndef LABREA_TYPES_H
 #define LABREA_TYPES_H 1
 
+#include <inttypes.h>
+
 #define MAX_ARGS 16
 
 namespace labrea {

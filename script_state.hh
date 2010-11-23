@@ -1,6 +1,8 @@
 #ifndef SCRIPT_STATE_HH
 #define SCRIPT_STATE_HH 1
 
+#include <cstdlib>
+
 #include <pthread.h>
 
 #include "lua.h"
