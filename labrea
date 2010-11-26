@@ -33,6 +33,10 @@ fi
 case $LABREA_SCRIPT in
     *.lua)
         ;;
+    *.lc)
+        ;;
+    *.luc)
+        ;;
     *)
         echo "'$LABREA_SCRIPT' doesn't look like a lua script."
         exit 1
