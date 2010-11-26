@@ -21,6 +21,7 @@ namespace labrea {
 
 pthread_mutex_t luamutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_key_t invocation_state_key;
+pthread_t timer_thread;
 
 static pthread_key_t lua_thread_key;
 static lua_State *luaStateProto(NULL);
@@ -112,6 +113,34 @@ static void *l_alloc(void *ud, void *ptr, size_t osize, size_t nsize) {
     }
 }
 
+static void* timerLoop(void* a) {
+    for (int i = 0;; ++i) {
+        sleep(1);
+        LockHolder lh(&luamutex);
+        lua_getglobal(luaStateProto, "labrea_periodic");
+        lua_pushinteger(luaStateProto, i);
+        if (lua_pcall(luaStateProto, 1, 0, NULL) != 0) {
+            const char *errmsg(lua_tostring(luaStateProto, -1));
+            std::cerr << "Error running exit function: " << errmsg << std::endl;
+        }
+    }
+}
+
+static void startTimerThread() {
+    pthread_attr_t attr;
+
+    if (pthread_attr_init(&attr) != 0 ||
+        pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED) != 0) {
+        perror("pthread attr init");
+        exit(1);
+    }
+
+    if (pthread_create(&timer_thread, &attr, timerLoop, NULL) != 0) {
+        perror("pthread_create");
+        exit(1);
+    }
+}
+
 void initScriptingState() {
     if (pthread_key_create(&lua_thread_key, NULL) != 0) {
         perror("pthread_key_create");
@@ -140,6 +169,8 @@ void initScriptingState() {
     }
 
     initFunctions(luaStateProto);
+
+    startTimerThread();
 }
 
 void destroyScriptingState() {
