@@ -11,7 +11,7 @@ function labrea.atexit(f)
 end
 
 function labrea.schedule(t, f)
-   tab = labrea.periodic_queue
+   local tab = labrea.periodic_queue
    t = t + labrea.current_timestamp
    if not tab[t] then
       tab[t] = {}
