@@ -2,7 +2,8 @@
 
 owd=`pwd`
 cd `dirname $0`
-labreaso=`pwd -P`/labrea.so
+labreadir=`pwd -P`
+labreaso=$labreadir/labrea.so
 cd $owd
 
 case `uname -s` in
@@ -38,5 +39,13 @@ case $LABREA_SCRIPT in
 esac
 
 export LABREA_SCRIPT
+
+LABREA_INIT=$labreadir/init.lua
+if [ ! -f "$LABREA_INIT" ]
+then
+    echo "Can't find init file:  $LABREA_INIT"
+    exit 1
+fi
+export LABREA_INIT
 
 exec "$@"

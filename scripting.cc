@@ -91,58 +91,7 @@ static int do_reinit(lua_State *s) {
     return 0;
 }
 
-class WriteCapturer {
-public:
-
-    WriteCapturer() {}
-
-    void operator() (const void* p, size_t s) {
-        ss.write(static_cast<const char*>(p), s);
-        assert(!ss.fail());
-    }
-
-    std::string str() {
-        return ss.str();
-    }
-
-private:
-    std::stringstream ss;
-
-    DISALLOW_COPY_AND_ASSIGN(WriteCapturer);
-};
-
-static int myluawriter(lua_State *l, const void *p, size_t sz, void* ud) {
-    WriteCapturer *wc = static_cast<WriteCapturer*>(ud);
-    (*wc)(p, sz);
-    return 0;
-}
-
-static int add_exit(lua_State *s) {
-    WriteCapturer wc;
-    if (lua_dump(s, myluawriter, &wc) != 0) {
-        const char *errmsg(lua_tostring(s, -1));
-        std::cerr << "Error dumping function: " << errmsg << std::endl;
-    } else {
-
-        LockHolder lh(&luamutex);
-        lua_getglobal(luaStateProto, "labrea");
-        lua_getfield(luaStateProto, -1, "exit_handlers");
-
-        std::string str = wc.str();
-        if (luaL_loadbuffer(luaStateProto, str.data(), str.size(), "atexitfun") != 0) {
-            const char *errmsg(lua_tostring(s, -1));
-            std::cerr << "Error loading function: " << errmsg << std::endl;
-        }
-        lua_pushinteger(luaStateProto, 0);
-
-        lua_settable(luaStateProto, -3);
-    }
-
-    return 0;
-}
-
 static const luaL_Reg labrea_funcs[] = {
-    {"atexit", add_exit},
     {"fileno", do_fileno},
     {"invoke", do_invoke},
     {"reinit", do_reinit},
@@ -179,20 +128,15 @@ void initScriptingState() {
 
     luaL_register(luaStateProto, "labrea", labrea_funcs);
 
-    lua_getglobal(luaStateProto, "labrea");
-    lua_newtable(luaStateProto);
-    lua_setfield(luaStateProto, -2, "exit_handlers");
-
-    const char *path = getenv("LABREA_SCRIPT");
-    if (path == NULL) {
-        std::cerr << "No LABREA_SCRIPT set, taking it from stdin." << std::endl;
-    }
-    int status = luaL_dofile(luaStateProto, path);
-    if (status) {
-        std::cerr << "Error processing labrea script from "
-                  << (path == NULL ? "stdin" : path)
-                  << ": " << lua_tostring(luaStateProto, -1) << std::endl;
-        exit(1);
+    const char *path = getenv("LABREA_INIT");
+    if (path != NULL) {
+        int status = luaL_dofile(luaStateProto, path);
+        if (status) {
+            std::cerr << "Error processing labrea script from "
+                      << (path == NULL ? "stdin" : path)
+                      << ": " << lua_tostring(luaStateProto, -1) << std::endl;
+            exit(1);
+        }
     }
 
     initFunctions(luaStateProto);
@@ -205,11 +149,7 @@ void destroyScriptingState() {
 
     lua_pushnil(luaStateProto);
     assert(lua_istable(luaStateProto, -2));
-    // function -> 0 mapping.
     while (lua_next(luaStateProto, -2) != 0) {
-        lua_pop(luaStateProto, 1); // pop the value (don't care)
-        lua_pushvalue(luaStateProto, -1); // Copy the function
-        // Now invoke it.
         if (lua_pcall(luaStateProto, 0, 0, NULL) != 0) {
             const char *errmsg(lua_tostring(luaStateProto, -1));
             std::cerr << "Error running exit function: " << errmsg << std::endl;
