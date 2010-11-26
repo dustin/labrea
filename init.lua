@@ -8,4 +8,10 @@ labrea['atexit'] = function(f)
                       table.insert(labrea['exit_handlers'], f)
                    end
 
+-- This function is called immediately before the process exits.
+function labrea_exiting()
+   for k,f in pairs(labrea['exit_handlers']) do f() end
+end
+
+-- Now that our environment is initialized, let's load the user script.
 dofile(os.getenv("LABREA_SCRIPT"))

@@ -144,16 +144,10 @@ void initScriptingState() {
 
 void destroyScriptingState() {
     LockHolder lh(&luamutex);
-    lua_getglobal(luaStateProto, "labrea");
-    lua_getfield(luaStateProto, -1, "exit_handlers");
-
-    lua_pushnil(luaStateProto);
-    assert(lua_istable(luaStateProto, -2));
-    while (lua_next(luaStateProto, -2) != 0) {
-        if (lua_pcall(luaStateProto, 0, 0, NULL) != 0) {
-            const char *errmsg(lua_tostring(luaStateProto, -1));
-            std::cerr << "Error running exit function: " << errmsg << std::endl;
-        }
+    lua_getglobal(luaStateProto, "labrea_exiting");
+    if (lua_pcall(luaStateProto, 0, 0, NULL) != 0) {
+        const char *errmsg(lua_tostring(luaStateProto, -1));
+        std::cerr << "Error running exit function: " << errmsg << std::endl;
     }
 }
 
