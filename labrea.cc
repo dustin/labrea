@@ -55,6 +55,11 @@ public:
 
         initScriptingState();
     }
+
+    ~LabreaInit() {
+        LuaInvocation invocation;
+        destroyScriptingState();
+    }
 } initializer;
 
 struct ftype *findFunc(const char *name) {

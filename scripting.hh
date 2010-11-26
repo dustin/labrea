@@ -15,6 +15,7 @@
 namespace labrea {
 
 void initScriptingState();
+void destroyScriptingState();
 
 }
 
