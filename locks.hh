@@ -49,6 +49,29 @@ private:
     bool locked;
 };
 
+// Like a LockHolder, but temporarily releases the lock.
+class AntiLockHolder {
+public:
+    AntiLockHolder(pthread_mutex_t *m) : mutex(m) {
+        int e;
+        if ((e = pthread_mutex_unlock(mutex)) != 0) {
+            std::string message = "MUTEX_ERROR: Failed to release lock: ";
+            message.append(std::strerror(e));
+            throw std::runtime_error(message);
+        }
+    }
+    ~AntiLockHolder() {
+        int e;
+        if ((e = pthread_mutex_lock(mutex)) != 0) {
+            std::string message = "MUTEX ERROR: Failed to acquire lock: ";
+            message.append(std::strerror(e));
+            throw std::runtime_error(message);
+        }
+    }
+private:
+    pthread_mutex_t *mutex;
+};
+
 }
 
 #endif /* LOCKS_HH */
