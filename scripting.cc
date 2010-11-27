@@ -40,7 +40,22 @@ static int do_fileno(lua_State *ls) {
 
 static int do_usleep(lua_State *ls) {
     int howlong = lua_tointeger(ls, -1);
+    // This is mildly gross, but we want to release the lock to sleep.
+    // The lock has automatic cleanup in the caller.
+    int e;
+    if ((e = pthread_mutex_unlock(&luamutex)) != 0) {
+        std::string message = "MUTEX_ERROR: Failed to release lock: ";
+        message.append(std::strerror(e));
+        throw std::runtime_error(message);
+    }
+
     usleep(howlong);
+
+    if ((e = pthread_mutex_lock(&luamutex)) != 0) {
+        std::string message = "MUTEX ERROR: Failed to acquire lock: ";
+        message.append(std::strerror(e));
+        throw std::runtime_error(message);
+    }
     return 0;
 }
 
