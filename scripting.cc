@@ -71,7 +71,22 @@ static int do_invoke(lua_State *ls) {
         args[i].i64 = lua_tointeger(ls, i + 2); // 2 == starting point of args
     }
 
+    // Similar to sleep, invoking from around_advice should be done
+    // without a lock.
+    int e;
+    if ((e = pthread_mutex_unlock(&luamutex)) != 0) {
+        std::string message = "MUTEX_ERROR: Failed to release lock: ";
+        message.append(std::strerror(e));
+        throw std::runtime_error(message);
+    }
+
     lua_Integer rv = abstractInvoke(&fun, args);
+
+    if ((e = pthread_mutex_lock(&luamutex)) != 0) {
+        std::string message = "MUTEX ERROR: Failed to acquire lock: ";
+        message.append(std::strerror(e));
+        throw std::runtime_error(message);
+    }
 
     lua_settop(ls, 0);
     lua_pushinteger(ls, rv);
