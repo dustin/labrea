@@ -1,4 +1,5 @@
 LINUX_LDFLAGS=-shared -Wl,-soname,labrea.so -ldl -lpthread
+FREEBSD_LDFLAGS=-shared -Wl,-soname,labrea.so -lpthread
 MAC_LDFLAGS=-MD -MP -Wl,-undefined -Wl,dynamic_lookup -dynamiclib
 
 PLATS=linux mac
@@ -28,12 +29,16 @@ clean:
 linux:
 	$(MAKE) LDFLAGS="$(LINUX_LDFLAGS)" labrea.so
 
+freebsd:
+	$(MAKE) LDFLAGS="$(FREEBSD_LDFLAGS)" labrea.so
+
 mac:
 	$(MAKE) LDFLAGS="$(MAC_LDFLAGS)" labrea.so
 
 # Uname -> target mappings.
 Linux: linux
 Darwin: mac
+FreeBSD: freebsd
 
 gen_invoker.cc: mkgeninvoker.py
 	./mkgeninvoker.py
