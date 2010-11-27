@@ -18,13 +18,14 @@ lua_State* getLuaState();
 
 class LuaStateHolder {
 public:
-    LuaStateHolder(lua_State *ls) : state(ls) {
+    LuaStateHolder(lua_State *ls) : state(ls), lh(&luamutex) {
         assert(state);
     }
     ~LuaStateHolder() {
     }
 
     lua_State *state;
+    LockHolder lh;
 };
 
 class LuaInvocation {
