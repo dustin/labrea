@@ -40,6 +40,7 @@ static int computeOffset(struct ftype *fun) {
 static class LabreaInit {
 public:
     LabreaInit() {
+        initPthreadKeys();
         LuaInvocation invocation;
         labreafree = reinterpret_cast<typeof(labreafree)>(dlsym(RTLD_NEXT, "free"));
         labrearealloc = reinterpret_cast<typeof(labrearealloc)>(dlsym(RTLD_NEXT, "realloc"));

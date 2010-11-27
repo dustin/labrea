@@ -150,7 +150,7 @@ static void startTimerThread() {
     }
 }
 
-void initScriptingState() {
+void initPthreadKeys() {
     if (pthread_key_create(&lua_thread_key, NULL) != 0) {
         perror("pthread_key_create");
         abort();
@@ -160,7 +160,9 @@ void initScriptingState() {
         perror("pthread_key_create");
         abort();
     }
+}
 
+void initScriptingState() {
     luaStateProto = lua_newstate(l_alloc, NULL);
     luaL_openlibs(luaStateProto);
 

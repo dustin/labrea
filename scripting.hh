@@ -14,6 +14,7 @@
 
 namespace labrea {
 
+void initPthreadKeys();
 void initScriptingState();
 void destroyScriptingState();
 
