@@ -128,7 +128,7 @@ static void* timerLoop(void* a) {
         LockHolder lh(&luamutex);
         lua_getglobal(luaStateProto, "labrea_periodic");
         lua_pushinteger(luaStateProto, i);
-        if (lua_pcall(luaStateProto, 1, 0, NULL) != 0) {
+        if (lua_pcall(luaStateProto, 1, 0, 0) != 0) {
             const char *errmsg(lua_tostring(luaStateProto, -1));
             std::cerr << "Error running exit function: " << errmsg << std::endl;
         }
@@ -185,7 +185,7 @@ void initScriptingState() {
 void destroyScriptingState() {
     LockHolder lh(&luamutex);
     lua_getglobal(luaStateProto, "labrea_exiting");
-    if (lua_pcall(luaStateProto, 0, 0, NULL) != 0) {
+    if (lua_pcall(luaStateProto, 0, 0, 0) != 0) {
         const char *errmsg(lua_tostring(luaStateProto, -1));
         std::cerr << "Error running exit function: " << errmsg << std::endl;
     }
