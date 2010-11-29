@@ -31,5 +31,15 @@ union farg {
     uint64_t i64;
 };
 
+template <typename F>
+F function_cast(const void *p) {
+    union {
+        const void *vp;
+        F fp;
+    } hack;
+    hack.vp = p;
+    return hack.fp;
+}
+
 }
 #endif /* LABREA_TYPES_H */

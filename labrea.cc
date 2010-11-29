@@ -42,8 +42,8 @@ public:
     LabreaInit() {
         initPthreadKeys();
         LuaInvocation invocation;
-        labreafree = reinterpret_cast<typeof(labreafree)>(dlsym(RTLD_NEXT, "free"));
-        labrearealloc = reinterpret_cast<typeof(labrearealloc)>(dlsym(RTLD_NEXT, "realloc"));
+        labreafree = function_cast<typeof(labreafree)>(dlsym(RTLD_NEXT, "free"));
+        labrearealloc = function_cast<typeof(labrearealloc)>(dlsym(RTLD_NEXT, "realloc"));
         assert(labreafree);
         assert(labrearealloc);
 

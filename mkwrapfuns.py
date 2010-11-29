@@ -15,7 +15,7 @@ Rv invoke(struct ftype *ft, %(callsig)s) {
     assert(ft->num_args == %(arity)d);
     void *forig = ft->orig ? ft->orig : dlsym(RTLD_NEXT, ft->name);
     assert(forig);
-    Rv (*x)(%(callsig)s) = reinterpret_cast<Rv (*)(%(callsig)s)>(forig);
+    Rv (*x)(%(callsig)s) = function_cast<Rv (*)(%(callsig)s)>(forig);
     return x(%(args)s);
 }
 

@@ -38,7 +38,7 @@ def gen(out, argc, r, argwidth):
     fargs = ', '.join('union farg a%d' % i for i in range(len(argwidth)))
     callargs = ', '.join('a%d.%s' % (i, fargtype(t)) for (i, t) in enumerate(argwidth))
     out.write("static lua_Integer %s(const void *f, %s) {\n" % (fname, fargs))
-    out.write("    %s (*fc)(%s) = reinterpret_cast<%s (*)(%s)>(f);\n" % (
+    out.write("    %s (*fc)(%s) = function_cast<%s (*)(%s)>(f);\n" % (
         type(r), argtypes, type(r), argtypes))
     out.write("    return (lua_Integer)fc(%s);\n" % callargs)
     out.write("}\n\n")
