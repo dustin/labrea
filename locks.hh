@@ -16,7 +16,7 @@ public:
         unlock();
     }
     void lock() {
-        int e;
+        int e(0);
         pthread_mutexattr_t attr;
 
         if (pthread_mutexattr_init(&attr) != 0 ||

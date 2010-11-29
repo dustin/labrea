@@ -96,6 +96,7 @@ static void initFunctions(lua_State *state) {
 }
 
 static int do_reinit(lua_State *s) {
+    (void)s;
     LockHolder lh(&luamutex);
     initFunctions(luaStateProto);
     return 0;
@@ -123,6 +124,7 @@ static void *l_alloc(void *ud, void *ptr, size_t osize, size_t nsize) {
 }
 
 static void* timerLoop(void* a) {
+    (void)a;
     for (int i = 0;; ++i) {
         sleep(1);
         LockHolder lh(&luamutex);
@@ -133,6 +135,7 @@ static void* timerLoop(void* a) {
             std::cerr << "Error running exit function: " << errmsg << std::endl;
         }
     }
+    return NULL;
 }
 
 static void startTimerThread() {

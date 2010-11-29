@@ -84,16 +84,14 @@ namespace labrea {
         out.write("}\n\n")
 
     out.write("lua_Integer abstractInvoke(struct ftype *fun, union farg *args) {\n")
-    out.write("    lua_Integer rv;\n")
     out.write("    switch (fun->num_args) {");
     for i in range(1, MAXARGS+1):
         out.write("    case %d:\n" % i)
         fa = ', '.join('args[%d]' % x for x in range(i))
-        out.write("        rv = abstractInvoke(fun, %s);\n" % fa)
-        out.write("        break;\n")
+        out.write("        return abstractInvoke(fun, %s);\n" % fa)
 
     out.write("    }\n")
-    out.write("    return rv;\n")
+    out.write("    abort(); // UNREACHED\n")
     out.write("}\n")
 
     out.write("}\n")
