@@ -37,5 +37,12 @@ function labrea_periodic(t)
    end
 end
 
+function labrea.periodic(period, f)
+   labrea.schedule(period, function()
+                              f()
+                              labrea.periodic(period, f)
+                           end)
+end
+
 -- Now that our environment is initialized, let's load the user script.
 dofile(os.getenv("LABREA_SCRIPT"))
