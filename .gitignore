@@ -3,6 +3,8 @@
 *.pyc
 *.so
 *~
+.DS_Store
+/Makefile
 /gen_invoker.cc
 /gen_scripting.hh
 /gen_wrapperfuns.hh

@@ -1,0 +1,26 @@
+#!/bin/sh
+
+LINUX_LDFLAGS="-shared -Wl,-soname,labrea.so -ldl -lpthread"
+FREEBSD_LDFLAGS="-shared -Wl,-soname,labrea.so -lpthread"
+MAC_LDFLAGS="-MD -MP -Wl,-undefined -Wl,dynamic_lookup -dynamiclib"
+
+os=`uname -s`
+
+case $os in
+    Darwin)
+        LDFLAGS="$MAC_LDFLAGS"
+        ;;
+    FreeBSD)
+        LDFLAGS="$FREEBSD_LDFLAGS"
+        ;;
+    Linux)
+        LDFLAGS="$LINUX_LDFLAGS"
+        ;;
+    *)
+        echo "Don't know how to do stuff on $os yet"
+        exit 1
+esac
+
+sed "s/@LDFLAGS@/$LDFLAGS/g" Makefile.in > Makefile
+
+echo "Ready to compile for $os"
