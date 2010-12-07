@@ -4,6 +4,8 @@ LINUX_LDFLAGS="-shared -Wl,-soname,labrea.so -ldl -lpthread"
 FREEBSD_LDFLAGS="-shared -Wl,-soname,labrea.so -lpthread"
 MAC_LDFLAGS="-MD -MP -Wl,-undefined -Wl,dynamic_lookup -dynamiclib"
 
+PREFIX=/usr/local
+
 os=`uname -s`
 
 case $os in
@@ -21,6 +23,9 @@ case $os in
         exit 1
 esac
 
-sed "s/@LDFLAGS@/$LDFLAGS/g" Makefile.in > Makefile
+sed -e "s/@LDFLAGS@/$LDFLAGS/g" \
+    -e "s,@PREFIX@,$PREFIX,g" \
+    -e "s,@@PREFIX@@,@PREFIX@,g" \
+    Makefile.in > Makefile
 
 echo "Ready to compile for $os"

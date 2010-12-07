@@ -4,6 +4,7 @@ LUACFLAGS=-fPIC
 
 CXXFLAGS=-fPIC -Wall -g -I$(LUA)/src
 LDFLAGS=@LDFLAGS@
+PREFIX=@PREFIX@
 
 labrea.so: lua labrea.o scripting.o gen_invoker.o
 	$(CXX) $(LDFLAGS) -o labrea.so labrea.o scripting.o gen_invoker.o $(LUA)/src/*.o
@@ -16,6 +17,12 @@ clean:
 	rm -f labrea.so labrea.o scripting.o gen_invoker.cc gen_invoker.o \
           gen_scripting.hh gen_wrapperfuns.hh
 	cd $(LUA) && $(MAKE) clean
+
+install: labrea.so
+	sed "s,@\PREFIX@,$(PREFIX),g" labrea > $(PREFIX)/bin/labrea
+	chmod 755 $(PREFIX)/bin/labrea
+	cp labrea.so $(PREFIX)/lib/labrea.so
+	cp init.lua $(PREFIX)/lib/labrea-init.lua
 
 gen_invoker.cc: mkgeninvoker.py
 	./mkgeninvoker.py

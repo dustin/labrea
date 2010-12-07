@@ -1,9 +1,22 @@
 #!/bin/sh
 
 owd=`pwd`
-cd `dirname $0`
-labreadir=`pwd -P`
-labreaso=$labreadir/labrea.so
+
+PREFIX=@PREFIX@
+if [ -d $PREFIX ]
+then
+    # When running from the install dir.
+    labreadir=$PREFIX/lib
+    labreaso=$labreadir/labrea.so
+    LABREA_INIT=$labreadir/labrea-init.lua
+else
+    # When running from the src dir.
+    cd `dirname $0`
+    labreadir=`pwd -P`
+    labreaso=$labreadir/labrea.so
+    LABREA_INIT=$labreadir/init.lua
+fi
+
 cd $owd
 
 case `uname -s` in
@@ -44,7 +57,6 @@ esac
 
 export LABREA_SCRIPT
 
-LABREA_INIT=$labreadir/init.lua
 if [ ! -f "$LABREA_INIT" ]
 then
     echo "Can't find init file:  $LABREA_INIT"
