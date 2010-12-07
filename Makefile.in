@@ -1,5 +1,5 @@
 LUA=lua-5.1.4
-LUATARGET=posix
+LUATARGET=CORE_O LIB_O
 LUACFLAGS=-fPIC
 
 INSTALL=/usr/bin/install
@@ -14,8 +14,7 @@ labrea.so: lua labrea.o scripting.o gen_invoker.o
 	$(CXX) $(LDFLAGS) -o labrea.so labrea.o scripting.o gen_invoker.o $(LUA)/src/*.o
 
 lua:
-	cd $(LUA)/src && $(MAKE) CC="$(CXX)" MORECFLAGS="$(LUACFLAGS)" $(LUATARGET)
-	rm $(LUA)/src/lua.o $(LUA)/src/luac.o
+	cd $(LUA)/src && $(MAKE) CC="$(CXX)" MORECFLAGS="$(LUACFLAGS)" lua MYCFLAGS=-DLUA_USE_POSIX
 
 clean:
 	rm -f labrea.so labrea.o scripting.o gen_invoker.cc gen_invoker.o \
