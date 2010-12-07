@@ -42,10 +42,12 @@ rm -rf %{buildroot}
 %{_bindir}/labrea
 %{_libexecdir}/labrea.so
 %{_datadir}/labrea-init.lua
-%dir %attr (0755, root, bin) %{_libexecdir}
-%dir %attr (0755, root, bin) %{_datadir}
+%{_datadir}/labrea/examples/*lua
 %attr (0755, root, bin) %{_libexecdir}/labrea.so
 %attr (0644, root, bin) %{_datadir}/labrea-init.lua
+%attr (0644, root, bin) %{_datadir}/labrea/examples/*.lua
+%dir %attr (0755, root, bin) %{_libexecdir}
+%dir %attr (0755, root, bin) %{_datadir}
 
 %changelog
 * Tue Dec  7 2010 Dustin Sallings <dustin@spy.net>

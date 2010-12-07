@@ -23,11 +23,13 @@ clean:
 	cd $(LUA) && $(MAKE) clean
 
 install: labrea.so
-	$(INSTALL) -d $(INSTDIR)/bin $(INSTDIR)/libexec $(INSTDIR)/share
+	$(INSTALL) -d $(INSTDIR)/bin $(INSTDIR)/libexec \
+		$(INSTDIR)/share/labrea/examples
 	sed "s,@\PREFIX@,$(PREFIX),g" labrea > $(INSTDIR)/bin/labrea
 	chmod 755 $(INSTDIR)/bin/labrea
 	$(INSTALL) -m 755 labrea.so $(INSTDIR)/libexec/labrea.so
 	$(INSTALL) -m 644 init.lua $(INSTDIR)/share/labrea-init.lua
+	$(INSTALL) -m 644 examples/*lua $(INSTDIR)/share/labrea/examples
 
 gen_invoker.cc: mkgeninvoker.py
 	./mkgeninvoker.py
