@@ -6,9 +6,8 @@ PREFIX=@PREFIX@
 if [ -d $PREFIX ]
 then
     # When running from the install dir.
-    labreadir=$PREFIX/lib
-    labreaso=$labreadir/labrea.so
-    LABREA_INIT=$labreadir/labrea-init.lua
+    labreaso=$PREFIX/libexec/labrea.so
+    LABREA_INIT=$PREFIX/share/labrea-init.lua
 else
     # When running from the src dir.
     cd `dirname $0`

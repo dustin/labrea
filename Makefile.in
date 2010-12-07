@@ -2,9 +2,13 @@ LUA=lua-5.1.4
 LUATARGET=posix
 LUACFLAGS=-fPIC
 
+INSTALL=/usr/bin/install
+
 CXXFLAGS=-fPIC -Wall -g -I$(LUA)/src
 LDFLAGS=@LDFLAGS@
 PREFIX=@PREFIX@
+DESTDIR=/
+INSTDIR=$(DESTDIR)/$(PREFIX)
 
 labrea.so: lua labrea.o scripting.o gen_invoker.o
 	$(CXX) $(LDFLAGS) -o labrea.so labrea.o scripting.o gen_invoker.o $(LUA)/src/*.o
@@ -19,10 +23,11 @@ clean:
 	cd $(LUA) && $(MAKE) clean
 
 install: labrea.so
-	sed "s,@\PREFIX@,$(PREFIX),g" labrea > $(PREFIX)/bin/labrea
-	chmod 755 $(PREFIX)/bin/labrea
-	cp labrea.so $(PREFIX)/lib/labrea.so
-	cp init.lua $(PREFIX)/lib/labrea-init.lua
+	$(INSTALL) -d $(INSTDIR)/bin $(INSTDIR)/libexec $(INSTDIR)/share
+	sed "s,@\PREFIX@,$(PREFIX),g" labrea > $(INSTDIR)/bin/labrea
+	chmod 755 $(INSTDIR)/bin/labrea
+	$(INSTALL) -m 755 labrea.so $(INSTDIR)/libexec/labrea.so
+	$(INSTALL) -m 644 init.lua $(INSTDIR)/share/labrea-init.lua
 
 gen_invoker.cc: mkgeninvoker.py
 	./mkgeninvoker.py
