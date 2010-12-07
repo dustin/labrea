@@ -18,6 +18,13 @@ fi
 
 cd $owd
 
+usage() {
+    echo "$@"
+    echo "Usage:  $0 myscript.lua command [--arguments]"
+    echo "For more info, see the wiki:  https://github.com/dustin/labrea/wiki"
+    exit 1
+}
+
 case `uname -s` in
     Darwin)
         DYLD_FORCE_FLAT_NAMESPACE=YES
@@ -38,8 +45,7 @@ shift
 
 if [ ! -f "$LABREA_SCRIPT" ]
 then
-    echo "Can't find labrea script."
-    exit 1
+    usage "Can't find labrea script."
 fi
 
 case $LABREA_SCRIPT in
@@ -50,8 +56,7 @@ case $LABREA_SCRIPT in
     *.luc)
         ;;
     *)
-        echo "'$LABREA_SCRIPT' doesn't look like a lua script."
-        exit 1
+        usage "'$LABREA_SCRIPT' doesn't look like a lua script."
 esac
 
 export LABREA_SCRIPT
