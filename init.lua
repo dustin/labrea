@@ -1,23 +1,14 @@
 -- This script is executed to initialize the scripting environment
 -- after declaring the labrea object and registering all C functions.
 
+--
+-- Begin internals.
+--
+
 -- If exit handlers are used, the table for them must be created
 labrea["exit_handlers"] = {}
 labrea["periodic_queue"] = {}
 labrea["current_timestamp"] = 0
-
-function labrea.atexit(f)
-   table.insert(labrea.exit_handlers, f)
-end
-
-function labrea.schedule(t, f)
-   local tab = labrea.periodic_queue
-   t = t + labrea.current_timestamp
-   if not tab[t] then
-      tab[t] = {}
-   end
-   table.insert(tab[t], f)
-end
 
 -- This function is called immediately before the process exits.
 function labrea_exiting()
@@ -37,11 +28,32 @@ function labrea_periodic(t)
    end
 end
 
+--
+-- End of internals.
+--
+
+--
+-- API provided to lua scripts.
+--
+
 function labrea.periodic(period, f)
    labrea.schedule(period, function()
                               f()
                               labrea.periodic(period, f)
                            end)
+end
+
+function labrea.atexit(f)
+   table.insert(labrea.exit_handlers, f)
+end
+
+function labrea.schedule(t, f)
+   local tab = labrea.periodic_queue
+   t = t + labrea.current_timestamp
+   if not tab[t] then
+      tab[t] = {}
+   end
+   table.insert(tab[t], f)
 end
 
 -- Now that our environment is initialized, let's load the user script.
