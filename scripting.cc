@@ -165,6 +165,19 @@ void initPthreadKeys() {
     }
 }
 
+static void recordFunctions() {
+    lua_settop(luaStateProto, 0);
+    for (size_t i = 0; functions[i].name; ++i) {
+        lua_getglobal(luaStateProto, "labrea_record_function");
+        lua_pushstring(luaStateProto, functions[i].name);
+        if (lua_pcall(luaStateProto, 1, 0, 0) != 0) {
+            const char *errmsg(lua_tostring(luaStateProto, -1));
+            std::cerr << "Error recording functions function: " << errmsg << std::endl;
+            abort();
+        }
+    }
+}
+
 void initScriptingState() {
     luaStateProto = lua_newstate(l_alloc, NULL);
     luaL_openlibs(luaStateProto);
@@ -182,7 +195,14 @@ void initScriptingState() {
         }
     }
 
-    initFunctions(luaStateProto);
+    recordFunctions();
+
+    lua_getglobal(luaStateProto, "labrea_load_user_script");
+    if (lua_pcall(luaStateProto, 0, 0, 0) != 0) {
+        const char *errmsg(lua_tostring(luaStateProto, -1));
+        std::cerr << "Error loading user script: " << errmsg << std::endl;
+        abort();
+    }
 
     startTimerThread();
 }

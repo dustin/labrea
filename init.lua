@@ -9,6 +9,13 @@
 labrea["exit_handlers"] = {}
 labrea["periodic_queue"] = {}
 labrea["current_timestamp"] = 0
+labrea["available_hooks"] = {}
+
+-- At init time, this function is called for each available hook
+-- point.
+function labrea_record_function(fname)
+   table.insert(labrea.available_hooks, fname)
+end
 
 -- This function is called immediately before the process exits.
 function labrea_exiting()
@@ -56,5 +63,8 @@ function labrea.schedule(t, f)
    table.insert(tab[t], f)
 end
 
--- Now that our environment is initialized, let's load the user script.
-dofile(os.getenv("LABREA_SCRIPT"))
+-- When we're ready, we'll do this.
+function labrea_load_user_script()
+   dofile(os.getenv("LABREA_SCRIPT"))
+   labrea.reinit()
+end
