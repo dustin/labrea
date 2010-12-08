@@ -83,22 +83,19 @@ static bool hasFunction(lua_State *state, const char *fname) {
     return !lua_isnil(state, -1);
 }
 
-static void initFunctions(lua_State *state) {
-    char fname[64];
-    for (size_t i = 0; functions[i].name; ++i) {
-        snprintf(fname, sizeof(fname)-1, "before_%s", functions[i].name);
-        functions[i].has_before = hasFunction(state, fname);
-        snprintf(fname, sizeof(fname)-1, "around_%s", functions[i].name);
-        functions[i].has_around = hasFunction(state, fname);
-        snprintf(fname, sizeof(fname)-1, "after_%s", functions[i].name);
-        functions[i].has_after = hasFunction(state, fname);
-    }
-}
-
 static int do_reinit(lua_State *s) {
     (void)s;
     LockHolder lh(&luamutex);
-    initFunctions(luaStateProto);
+    char fname[64];
+    for (size_t i = 0; functions[i].name; ++i) {
+        snprintf(fname, sizeof(fname)-1, "before_%s", functions[i].name);
+        functions[i].has_before = hasFunction(s, fname);
+        snprintf(fname, sizeof(fname)-1, "around_%s", functions[i].name);
+        functions[i].has_around = hasFunction(s, fname);
+        snprintf(fname, sizeof(fname)-1, "after_%s", functions[i].name);
+        functions[i].has_after = hasFunction(s, fname);
+    }
+
     return 0;
 }
 
