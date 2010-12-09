@@ -41,6 +41,32 @@ static int cstring_tolstring(lua_State *ls) {
     return 1;
 }
 
+static int do_malloc(lua_State *ls) {
+    size_t size = static_cast<size_t>(lua_tointeger(ls, -1));
+    assert(size > 0);
+    void *p = calloc(1, size);
+    assert(p);
+    lua_pushlstring(ls, static_cast<const char*>(p), size);
+    return 1;
+}
+
+static int do_free(lua_State *ls) {
+    void *addr = reinterpret_cast<void *>(lua_tointeger(ls, -1));
+    free(addr);
+    return 0;
+}
+
+static int do_memcpy(lua_State *ls) {
+    char *addr = reinterpret_cast<char *>(lua_tointeger(ls, -3));
+    size_t len(0);
+    const char *src = lua_tolstring(ls, -2, &len);
+    size_t n = static_cast<size_t>(lua_tointeger(ls, -1));
+
+    memcpy(addr, src, n);
+
+    return 0;
+}
+
 static int do_fileno(lua_State *ls) {
     FILE *f = reinterpret_cast<FILE *>(lua_tointeger(ls, -1));
     lua_pushinteger(ls, fileno(f));
@@ -110,7 +136,10 @@ static int do_reinit(lua_State *s) {
 
 static const luaL_Reg labrea_funcs[] = {
     {"fileno", do_fileno},
+    {"free", do_free},
     {"invoke", do_invoke},
+    {"malloc", do_malloc},
+    {"memcpy", do_memcpy},
     {"reinit", do_reinit},
     {"set_errno", set_errno},
     {"tostring", cstring_tolstring},
