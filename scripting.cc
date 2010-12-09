@@ -27,8 +27,17 @@ static pthread_key_t lua_thread_key;
 static lua_State *luaStateProto(NULL);
 
 static int cstring_tolstring(lua_State *ls) {
-    char *addr = reinterpret_cast<char *>(lua_tointeger(ls, -1));
-    lua_pushstring(ls, addr);
+    if (lua_gettop(ls) == 1) {
+        char *addr = reinterpret_cast<char *>(lua_tointeger(ls, -1));
+        lua_pushstring(ls, addr);
+    } else if (lua_gettop(ls) == 2) {
+        char *addr = reinterpret_cast<char *>(lua_tointeger(ls, -2));
+        size_t n = static_cast<size_t>(lua_tointeger(ls, -1));
+        lua_pushlstring(ls, addr, n);
+    } else {
+        lua_pushstring(ls, "labrea.tostring takes one or two args");
+        lua_error(ls);
+    }
     return 1;
 }
 
