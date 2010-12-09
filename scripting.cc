@@ -46,7 +46,7 @@ static int do_malloc(lua_State *ls) {
     assert(size > 0);
     void *p = calloc(1, size);
     assert(p);
-    lua_pushlstring(ls, static_cast<const char*>(p), size);
+    lua_pushinteger(ls, reinterpret_cast<lua_Integer>(p));
     return 1;
 }
 
