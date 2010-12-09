@@ -75,6 +75,11 @@ static int do_fileno(lua_State *ls) {
 
 static int do_usleep(lua_State *ls) {
     int howlong = lua_tointeger(ls, -1);
+    // There's a cost associated with this call.  Don't do it if it's
+    // unnecessary.
+    if (howlong < 1) {
+        return 0;
+    }
     // This is mildly gross, but we want to release the lock to sleep.
     // The lock has automatic cleanup in the caller.
     AntiLockHolder alh(&luamutex);
