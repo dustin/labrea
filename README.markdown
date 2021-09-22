@@ -1,6 +1,6 @@
 # OPP Scripting
 
-![Hackitecture](labrea/wiki/hackitecture.png "This is how it works")
+![Hackitecture](https://github.com/dustin/labrea/wiki/hackitecture.png "This is how it works")
 
 La Brea allows you to inject scripts into an existing application
 without recompiling.
@@ -45,12 +45,14 @@ interesting.  For example, if you'd like to truncate all reads so that
 the application never reads more than 64 bytes, you can do the
 following:
 
-    function around_read(f, d, buf, size)
-        if size > 64 then
-            size = 64
-        end
-        return labrea.invoke(f, d, buf, size)
+```lua
+function around_read(f, d, buf, size)
+    if size > 64 then
+        size = 64
     end
+    return labrea.invoke(f, d, buf, size)
+end
+```
 
 Alternatively, you can just cause an error as shown in the
 [random errors][re] example.
@@ -61,13 +63,15 @@ First, write a script to slow stuff down.  For example, if you'd like
 to slow random seeks down, you can create a script that looks like the
 following:
 
-    function before_lseek(fd, offset, whence)
-       if math.random(1, 100) == 13 then
-          io.write(string.format("Slowing down a seek on fd=%d to %d (%d)\n",
-                                 fd, offset, whence))
-          labrea.usleep(1000000)
-       end
-    end
+```lua
+function before_lseek(fd, offset, whence)
+   if math.random(1, 100) == 13 then
+      io.write(string.format("Slowing down a seek on fd=%d to %d (%d)\n",
+                             fd, offset, whence))
+      labrea.usleep(1000000)
+   end
+end
+```
 
 Save that in a file, say, `/tmp/slowseek.lua` and then use the
 `labrea` as follows:
